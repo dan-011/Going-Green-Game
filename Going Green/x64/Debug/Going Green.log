@@ -1,0 +1,17 @@
+﻿  GGAbstractAsset.cpp
+  GGAbstractCtrl.cpp
+  GGAbstractModel.cpp
+C:\Users\dpali\Documents\C++ Projects\Going Green\Going Green\GGAbstractModel.cpp(15,40): error C2761: 'bool GGAbstractModel::GetContinueGame(void)': redeclaration of member is not allowed
+  GGSubject.cpp
+  GGSubjectManager.cpp
+C:\Users\dpali\Documents\C++ Projects\Going Green\Going Green\GGSubjectManager.cpp(13,14): error C2259: 'GGStage': cannot instantiate abstract class
+C:\Users\dpali\Documents\C++ Projects\Going Green\Going Green\GGStage.h(7): message : see declaration of 'GGStage'
+C:\Users\dpali\Documents\C++ Projects\Going Green\Going Green\GGSubjectManager.cpp(13,14): message : due to following members:
+C:\Users\dpali\Documents\C++ Projects\Going Green\Going Green\GGSubjectManager.cpp(13,14): message : 'bool GGStage::Play(void)': is abstract
+C:\Users\dpali\Documents\C++ Projects\Going Green\Going Green\GGStage.h(11): message : see declaration of 'GGStage::Play'
+C:\Users\dpali\Documents\C++ Projects\Going Green\Going Green\GGSubjectManager.cpp(13,14): message : 'bool GGStage::GameOver(void)': is abstract
+C:\Users\dpali\Documents\C++ Projects\Going Green\Going Green\GGStage.h(12): message : see declaration of 'GGStage::GameOver'
+  GGView.cpp
+C:\Users\dpali\Documents\C++ Projects\Going Green\Going Green\GGView.cpp(10,1): error C2059: syntax error: '}'
+  GGWindow.cpp
+  Generating Code...

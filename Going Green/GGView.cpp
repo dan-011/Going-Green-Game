@@ -1,0 +1,24 @@
+#include "GGView.h"
+#include "GGWindow.h"
+
+GGView::GGView(GGAbstractCtrl* controller) : ctrl(controller) {
+	model = ctrl->GetModel();
+}
+GGView::~GGView() {
+	delete ctrl;
+}
+bool GGView::Show() {
+	sf::RenderWindow& window = GGWindow::Instance().GetWindow();
+	while (model->GetContinueGame()) {
+		window.pollEvent(GetEvent()); // check to make sure this works as intended
+		Notify();
+
+		window.clear(sf::Color(255, 255, 255));
+
+		for (auto asset : model->GetAssets()) {
+			asset->Draw();
+		}
+		window.display();
+	}
+	return model->GetSuccess();
+}
