@@ -4,3 +4,4 @@ GGAbstractAsset::~GGAbstractAsset() {}
 void GGAbstractAsset::SetPos(sf::Vector2f pos) {
 	position = pos;
 }
+void GGAbstractAsset::NextAnimation() {}
