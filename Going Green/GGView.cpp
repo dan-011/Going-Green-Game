@@ -4,11 +4,10 @@
 GGView::GGView(GGAbstractCtrl* controller) : ctrl(controller) {
 	model = ctrl->GetModel();
 }
-GGView::~GGView() {
-	delete ctrl;
-}
+GGView::~GGView() {}
 bool GGView::Show() {
 	sf::RenderWindow& window = GGWindow::Instance().GetWindow();
+	ctrl->ResetMdl();
 	while (model->GetContinueGame()) {
 		window.pollEvent(GetEvent()); // check to make sure this works as intended
 		Notify();
@@ -21,4 +20,7 @@ bool GGView::Show() {
 		window.display();
 	}
 	return model->GetSuccess();
+}
+sf::Time GGView::GetElapsedTime() {
+	return clock.getElapsedTime();
 }

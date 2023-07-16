@@ -14,6 +14,7 @@ public:
 	void SetContinueGame(bool isContinuing);
 	bool GetSuccess();
 	void SetSuccess(bool success);
+	virtual void ResetData() = 0;
 
 private:
 	std::vector<GGAbstractAsset*> assets;
@@ -21,4 +22,30 @@ private:
 	bool wasSuccess;
 };
 
+class GGPumpModel : public GGAbstractModel {
+public:
+	GGPumpModel();
+	virtual ~GGPumpModel();
+	GGSheetAsset* GetPump();
+	int GetNumPumps();
+	void SetNumPumps(int nPumps);
+	virtual void ResetData() override;
+
+private:
+	GGSheetAsset* pump; // change to object
+	int maxPumps;
+	int numPumps;
+	bool maxedOut;
+};
+
+class GGTestGameOverModel : public GGAbstractModel {
+public:
+	GGTestGameOverModel();
+	~GGTestGameOverModel();
+	GGListAsset* GetGameOverAsset();
+	virtual void ResetData() override;
+
+private:
+	GGListAsset* gameOverScreen; // change to object
+};
 #endif

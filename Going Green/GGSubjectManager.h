@@ -8,6 +8,7 @@ public:
 	GGSubjectManager();
 	~GGSubjectManager();
 	void PlayGame();
+	void AddStage(GGStage stage);
 
 private:
 	std::vector<GGStage> stages;

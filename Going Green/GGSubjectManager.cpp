@@ -10,7 +10,7 @@ void GGSubjectManager::PlayGame() {
 	bool success;
 	bool restart;
 	int i = 0;
-	while (i < stages.size()) { // we'll need to pass the window somehow
+	while (i < stages.size()) {
 		success = true;
 		restart = false;
 		auto stage = stages[i];
@@ -22,4 +22,7 @@ void GGSubjectManager::PlayGame() {
 			i++;
 		}
 	}
+}
+void GGSubjectManager::AddStage(GGStage stage) {
+	stages.push_back(stage);
 }

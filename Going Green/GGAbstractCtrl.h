@@ -5,13 +5,37 @@
 
 class GGAbstractCtrl {
 public:
-	GGAbstractCtrl(GGAbstractModel* mdl);
+	GGAbstractCtrl();
 	virtual ~GGAbstractCtrl();
-	GGAbstractModel* GetModel();
-	virtual void LeftClickDown(sf::Vector2f clickPos);
+	virtual GGAbstractModel* GetModel() = 0;
+	virtual void ResetMdl();
+};
+
+class GGPumpCtrl : public GGAbstractCtrl {
+public:
+	GGPumpCtrl();
+	virtual ~GGPumpCtrl();
+	virtual GGAbstractModel* GetModel() override;
+	virtual void AnimatePump();
+	virtual void PumpClicked();
+	virtual bool IsAnimatingPump();
+	virtual void EndGame();
 
 private:
-	GGAbstractModel* model;
+	GGPumpModel pumpMdl;
+
+};
+
+class GGTestGameOverCtrl : public GGAbstractCtrl {
+public:
+	GGTestGameOverCtrl();
+	~GGTestGameOverCtrl();
+	virtual GGAbstractModel* GetModel() override;
+	virtual void AnimateScreen();
+	virtual void RestartGame();
+
+private:
+	GGTestGameOverModel gOMdl;
 };
 
 #endif
