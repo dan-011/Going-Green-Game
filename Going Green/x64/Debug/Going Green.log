@@ -1,2 +1,5 @@
-﻿  GGIndivObservers.cpp
+﻿  GGMain.cpp
+  GGStage.cpp
+  GGSubjectManager.cpp
+  Generating Code...
   Going Green.vcxproj -> C:\Users\dpali\Documents\C++ Projects\Going Green\x64\Debug\Going Green.exe

@@ -1,9 +1,9 @@
 #include "GGStage.h"
-GGStage::GGStage(GGView* gameView, GGView* gameOverView) : game(gameView), gameOver(gameOverView) {}
+GGStage::GGStage(GGView* gameVw, GGView* gameOverVw) : gameView(gameVw), gameOverView(gameOverVw) {}
 GGStage::~GGStage() {}
 bool GGStage::Play() {
-	return game->Show();
+	return gameView->Show();
 }
 bool GGStage::GameOver() {
-	return gameOver->Show();
+	return gameOverView->Show();
 }

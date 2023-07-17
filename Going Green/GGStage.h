@@ -6,14 +6,14 @@
 
 class GGStage {
 public:
-	GGStage(GGView* gameView, GGView* gameOverView);
+	GGStage(GGView* gameVw, GGView* gameOverVw = NULL);
 	virtual ~GGStage();
 	virtual bool Play();
 	virtual bool GameOver();
 
 private:
-	GGView* game;
-	GGView* gameOver;
+	GGView* gameView;
+	GGView* gameOverView;
 };
 
 #endif
