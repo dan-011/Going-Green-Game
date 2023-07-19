@@ -29,6 +29,11 @@ void GGPumpCtrl::AnimateOil()
 	pumpMdl.GetOil()->NextAnimation();
 }
 void GGPumpCtrl::PumpClicked() {
+	if (pumpMdl.GetTransition()->GetDrawing())
+	{
+		pumpMdl.GetTransition()->SetDrawing(false);
+		return;
+	}
 	pumpMdl.SetNumPumps(pumpMdl.GetNumPumps() + 1);
 	pumpMdl.IncrementPumps();
 	if (pumpMdl.PumpMaxReached())

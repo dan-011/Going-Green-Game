@@ -28,6 +28,7 @@ public:
 	virtual ~GGPumpModel();
 	GGSheetAsset* GetPump();
 	GGSheetAsset* GetOil();
+	GGMinigameTransition* GetTransition();
 	int GetNumPumps();
 	void SetNumPumps(int nPumps);
 	virtual void ResetData() override;

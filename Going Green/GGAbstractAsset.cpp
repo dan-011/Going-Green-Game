@@ -122,14 +122,28 @@ void GGListAsset::SetScale(sf::Vector2f scale)
 
 GGMinigameTransition::GGMinigameTransition(std::string headerText, std::string subtitleText) : GGAbstractAsset(sf::Vector2f(0, 0)), isDrawing(true)
 {
+	if (!font.loadFromFile("Assets/Fonts/Minimal5x7.ttf"))
+	{
+		std::cout << "Font load from file failure!" << endl;
+	}
+	header.setFont(font);
+	subtitle.setFont(font);
+
 	header.setString(headerText);
-	header.setScale(100, 100);
+	header.setOrigin(header.getGlobalBounds().width / 2, header.getGlobalBounds().height / 2);
+	header.setPosition(640, 275);
+	header.setScale(2.5, 2.5);
+	header.setFillColor(sf::Color(0xE6EBD6FF));
 
 	subtitle.setString(subtitleText);
+	subtitle.setOrigin(subtitle.getGlobalBounds().width / 2, subtitle.getGlobalBounds().height / 2);
+	subtitle.setPosition(640, 375);
+	subtitle.setScale(2, 2);
+	subtitle.setFillColor(sf::Color(0xE6EBD6FF));
 
-	background.setFillColor(sf::Color(0x24222E88));
+	background.setFillColor(sf::Color(0x24222EDD));
 	background.setPosition(sf::Vector2f(0, 0));
-	background.setScale(1000, 1000);
+	background.setSize(sf::Vector2f(2000, 1000));
 }
 
 void GGMinigameTransition::Draw()
@@ -146,4 +160,14 @@ void GGMinigameTransition::SetScale(sf::Vector2f scale)
 {
 	header.setScale(scale);
 	subtitle.setScale(scale);
+}
+
+void GGMinigameTransition::SetDrawing(bool drawing)
+{
+	isDrawing = drawing;
+}
+
+bool GGMinigameTransition::GetDrawing()
+{
+	return isDrawing;
 }

@@ -13,6 +13,7 @@ void GGPumpClickObserver::Update() {
 	if (view.GetEvent().type == sf::Event::MouseButtonPressed) {
 		clickSwitch = true;
 	}
+
 	if (view.GetEvent().type == sf::Event::MouseButtonReleased && clickSwitch) {
 		ctrl.PumpClicked();
 		clickSwitch = false;

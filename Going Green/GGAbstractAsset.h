@@ -65,7 +65,10 @@ public:
 	//virtual ~GGMinigameTransition();
 	virtual void Draw() override;
 	virtual void SetScale(sf::Vector2f scale) override;
+	virtual void SetDrawing(bool drawing);
+	virtual bool GetDrawing();
 private:
+	sf::Font font;
 	sf::Text header;
 	sf::Text subtitle;
 	sf::RectangleShape background;
