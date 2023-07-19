@@ -65,6 +65,7 @@ bool GGSheetAsset::AnimationCompleted() {
 bool GGSheetAsset::CheckFinishedAnimating()
 {
 	return finishedAnimating;
+	return finishedAnimating;
 }
 void GGSheetAsset::SetCurFrame(int frame) {
 	curFrame = frame;
@@ -117,4 +118,32 @@ int GGListAsset::GetCurFrame() {
 void GGListAsset::SetScale(sf::Vector2f scale)
 {
 	assetBody.setScale(scale);
+}
+
+GGMinigameTransition::GGMinigameTransition(std::string headerText, std::string subtitleText) : GGAbstractAsset(sf::Vector2f(0, 0)), isDrawing(true)
+{
+	header.setString(headerText);
+	header.setScale(100, 100);
+
+	subtitle.setString(subtitleText);
+
+	background.setFillColor(sf::Color(0x24222E88));
+	background.setPosition(sf::Vector2f(0, 0));
+	background.setScale(1000, 1000);
+}
+
+void GGMinigameTransition::Draw()
+{
+	if (isDrawing)
+	{
+		GGWindow::Instance().GetWindow().draw(background);
+		GGWindow::Instance().GetWindow().draw(header);
+		GGWindow::Instance().GetWindow().draw(subtitle);
+	}
+}
+
+void GGMinigameTransition::SetScale(sf::Vector2f scale)
+{
+	header.setScale(scale);
+	subtitle.setScale(scale);
 }

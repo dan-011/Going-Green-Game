@@ -59,4 +59,16 @@ private:
 	int curFrame;
 };
 
+class GGMinigameTransition : public GGAbstractAsset {
+public:
+	GGMinigameTransition(std::string headerText, std::string subtitleText);
+	//virtual ~GGMinigameTransition();
+	virtual void Draw() override;
+	virtual void SetScale(sf::Vector2f scale) override;
+private:
+	sf::Text header;
+	sf::Text subtitle;
+	sf::RectangleShape background;
+	bool isDrawing;
+};
 #endif

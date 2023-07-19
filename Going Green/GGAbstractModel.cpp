@@ -27,10 +27,11 @@ void GGAbstractModel::SetSuccess(bool success) {
 }
 
 GGPumpModel::GGPumpModel() : pump(new GGSheetAsset(sf::Vector2f(650, 292), "Assets/Animations/oil_game/oil_drill_sprite_sheet.png", sf::Vector2u(4, 3))), maxPumps(10), numPumps(0), maxedOut(false), goalPumps(25), totalPumps(0), oil(new GGSheetAsset(sf::Vector2f(590, 360), "Assets/Animations/oil_game/oil_sprite_sheet.png", sf::Vector2u(3, 3), true, false)),
-background(new GGListAsset(sf::Vector2f(640, 360), vector < std::string > {"Assets/Animations/oil_game/oil_minigame_background.png"})) {
+background(new GGListAsset(sf::Vector2f(640, 360), vector < std::string > {"Assets/Animations/oil_game/oil_minigame_background.png"})), transition(new GGMinigameTransition("Drill", "Click as fast as you can!")) {
 	AddAsset(background);
 	AddAsset(oil);
 	AddAsset(pump);
+	AddAsset(transition);
 	background->SetScale(sf::Vector2f(4, 4));
 	pump->SetScale(sf::Vector2f(4, 4));
 	oil->SetScale(sf::Vector2f(16, 16));
@@ -39,6 +40,7 @@ GGPumpModel::~GGPumpModel() {
 	delete pump;
 	delete oil;
 	delete background;
+	delete transition;
 }
 GGSheetAsset* GGPumpModel::GetPump() {
 	return pump;

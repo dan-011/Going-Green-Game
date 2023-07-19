@@ -37,6 +37,7 @@ public:
 private:
 	GGSheetAsset* pump; // change to object
 	GGSheetAsset* oil;
+	GGMinigameTransition* transition;
 	GGListAsset* background;
 	int maxPumps;
 	int numPumps;
