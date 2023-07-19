@@ -39,6 +39,7 @@ private:
 	GGView& view;
 	GGPumpCtrl& ctrl;
 	sf::Time deltaT;
+	sf::Time currentTimePump;
 	sf::Time currentTime;
 };
 

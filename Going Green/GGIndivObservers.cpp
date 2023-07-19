@@ -19,19 +19,26 @@ void GGPumpClickObserver::Update() {
 	}
 }
 
-GGPumpTickObserver::GGPumpTickObserver(GGView& vw, GGPumpCtrl& controller, sf::Time dt) : view(vw), ctrl(controller), deltaT(dt), currentTime(sf::microseconds(0)) {
+GGPumpTickObserver::GGPumpTickObserver(GGView& vw, GGPumpCtrl& controller, sf::Time dt) : view(vw), ctrl(controller), deltaT(dt), currentTime(sf::microseconds(0)), currentTimePump(sf::microseconds(0)) {
 	view.AddObserver(this);
 }
 GGPumpTickObserver::~GGPumpTickObserver() {}
-void GGPumpTickObserver::Update() { // eventual implementation is to cycle the animation only when they have clicked (count the number of times they click and animate it x number of times)
-	if (ctrl.IsAnimatingPump() && currentTime == sf::milliseconds(0)) {
-		currentTime = view.GetElapsedTime();
+void GGPumpTickObserver::Update() {
+	if (ctrl.IsAnimatingPump() && currentTimePump == sf::milliseconds(0)) {
+		currentTimePump = view.GetElapsedTime();
 	}
-	if (view.GetElapsedTime() - currentTime >= deltaT && ctrl.IsAnimatingPump()) {
+	if (view.GetElapsedTime() - currentTimePump >= deltaT / (float)ctrl.GetQueuedPumps() && ctrl.IsAnimatingPump()) {
 		ctrl.AnimatePump();
+		currentTimePump = view.GetElapsedTime();
+	}
+	if (view.GetElapsedTime() - currentTime >= deltaT)
+	{
+		ctrl.AnimateOil();
 		currentTime = view.GetElapsedTime();
 	}
+	ctrl.CheckGameWon();
 }
+
 
 GGTestGameOverTick::GGTestGameOverTick(GGView& vw, GGTestGameOverCtrl& controller) : view(vw), ctrl(controller), deltaT(sf::milliseconds(60)), currentTime(sf::milliseconds(0)) {
 	view.AddObserver(this);

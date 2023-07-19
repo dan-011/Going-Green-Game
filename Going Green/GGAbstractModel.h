@@ -27,14 +27,21 @@ public:
 	GGPumpModel();
 	virtual ~GGPumpModel();
 	GGSheetAsset* GetPump();
+	GGSheetAsset* GetOil();
 	int GetNumPumps();
 	void SetNumPumps(int nPumps);
 	virtual void ResetData() override;
+	bool PumpMaxReached();
+	void IncrementPumps();
 
 private:
 	GGSheetAsset* pump; // change to object
+	GGSheetAsset* oil;
+	GGListAsset* background;
 	int maxPumps;
 	int numPumps;
+	int goalPumps;
+	int totalPumps;
 	bool maxedOut;
 };
 

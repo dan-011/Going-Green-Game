@@ -26,21 +26,34 @@ void GGAbstractModel::SetSuccess(bool success) {
 	wasSuccess = success;
 }
 
-GGPumpModel::GGPumpModel() : pump(new GGSheetAsset(sf::Vector2f(500, 500), "Assets/Animations/oil_game/oil_drill_sprite_sheet.png", sf::Vector2u(4, 3))), maxPumps(10), numPumps(0), maxedOut(false) {
+GGPumpModel::GGPumpModel() : pump(new GGSheetAsset(sf::Vector2f(650, 292), "Assets/Animations/oil_game/oil_drill_sprite_sheet.png", sf::Vector2u(4, 3))), maxPumps(10), numPumps(0), maxedOut(false), goalPumps(25), totalPumps(0), oil(new GGSheetAsset(sf::Vector2f(590, 360), "Assets/Animations/oil_game/oil_sprite_sheet.png", sf::Vector2u(3, 3), true, false)),
+background(new GGListAsset(sf::Vector2f(640, 360), vector < std::string > {"Assets/Animations/oil_game/oil_minigame_background.png"})) {
+	AddAsset(background);
+	AddAsset(oil);
 	AddAsset(pump);
+	background->SetScale(sf::Vector2f(4, 4));
+	pump->SetScale(sf::Vector2f(4, 4));
+	oil->SetScale(sf::Vector2f(16, 16));
 }
 GGPumpModel::~GGPumpModel() {
 	delete pump;
+	delete oil;
+	delete background;
 }
 GGSheetAsset* GGPumpModel::GetPump() {
 	return pump;
+}
+
+GGSheetAsset* GGPumpModel::GetOil()
+{
+	return oil;
 }
 int GGPumpModel::GetNumPumps() {
 	return numPumps;
 }
 void GGPumpModel::SetNumPumps(int nPumps) {
 	if (maxedOut) return; // continue
-	if (nPumps > maxPumps) {
+	if (nPumps >= maxPumps) {
 		maxedOut = true;
 		numPumps = maxPumps;
 	}
@@ -48,14 +61,23 @@ void GGPumpModel::SetNumPumps(int nPumps) {
 		numPumps = nPumps;
 	}
 }
+void GGPumpModel::IncrementPumps()
+{
+	totalPumps++;
+}
+bool GGPumpModel::PumpMaxReached()
+{
+	return (totalPumps >= goalPumps);
+}
 void GGPumpModel::ResetData() {
 	numPumps = 0;
 	SetContinueGame(true);
 	SetSuccess(true);
 	pump->SetCurFrame(0);
 	maxedOut = false;
+	totalPumps = 0;
 }
-
+ 
 GGTestGameOverModel::GGTestGameOverModel() : gameOverScreen(new GGListAsset(sf::Vector2f(400, 400), vector<std::string> {
 	"Assets/Animations/test_game_over/frame0.png",
 	"Assets/Animations/test_game_over/frame1.png",

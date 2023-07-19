@@ -17,9 +17,13 @@ public:
 	virtual ~GGPumpCtrl();
 	virtual GGAbstractModel* GetModel() override;
 	virtual void AnimatePump();
+	virtual void AnimateOil();
 	virtual void PumpClicked();
 	virtual bool IsAnimatingPump();
+	virtual void CheckGameWon();
 	virtual void EndGame();
+	virtual void WinGame();
+	virtual int GetQueuedPumps();
 
 private:
 	GGPumpModel pumpMdl;
