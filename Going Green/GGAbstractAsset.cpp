@@ -15,7 +15,7 @@ sf::Vector2f GGAbstractAsset::GetPos() {
 }
 void GGAbstractAsset::NextAnimation() {}
 
-GGSheetAsset::GGSheetAsset(sf::Vector2f pos, const std::string fileName, sf::Vector2u dims) : GGAbstractAsset(pos), dimensions(dims), curFrame(0) {
+GGSheetAsset::GGSheetAsset(sf::Vector2f pos, const std::string fileName, sf::Vector2u dims, bool animateOnce) : GGAbstractAsset(pos), dimensions(dims), curFrame(0), animOnce(animateOnce), finishedAnimating(false) {
 	assetTexture.loadFromFile(fileName);
 	assetBlock.width = assetTexture.getSize().x / dims.x;
 	assetBlock.height = assetTexture.getSize().y / dims.y;
@@ -31,13 +31,16 @@ GGSheetAsset::GGSheetAsset(sf::Vector2f pos, const std::string fileName, sf::Vec
 }
 GGSheetAsset::~GGSheetAsset() {}
 void GGSheetAsset::Draw() {
+	if (finishedAnimating && animOnce) return;
 	GGWindow::Instance().GetWindow().draw(assetBody);
 }
 void GGSheetAsset::NextAnimation() {
+	if (finishedAnimating && animOnce) return;
 	int numFrames = dimensions.x * dimensions.y;
 	curFrame++;
 	if (curFrame == numFrames) {
 		curFrame = 0;
+		finishedAnimating = true;
 	}
 	int row = curFrame / dimensions.x;
 	int col = curFrame % dimensions.x;

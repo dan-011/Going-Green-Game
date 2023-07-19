@@ -20,7 +20,7 @@ private:
 
 class GGSheetAsset : public GGAbstractAsset {
 public:
-	GGSheetAsset(sf::Vector2f pos, const std::string fileName, sf::Vector2u dims);
+	GGSheetAsset(sf::Vector2f pos, const std::string fileName, sf::Vector2u dims, bool animateOnce = false);
 	virtual ~GGSheetAsset();
 	virtual void Draw() override;
 	virtual void NextAnimation() override;
@@ -34,6 +34,8 @@ private:
 	sf::RectangleShape assetBody;
 	sf::Vector2u dimensions;
 	int curFrame;
+	bool animOnce;
+	bool finishedAnimating;
 };
 
 class GGListAsset : public GGAbstractAsset {
