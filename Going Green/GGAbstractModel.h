@@ -10,6 +10,8 @@ public:
 	virtual ~GGAbstractModel();
 	std::vector<GGAbstractAsset*>& GetAssets();
 	void AddAsset(GGAbstractAsset* asset);
+	void InsertAsset(GGAbstractAsset* asset, int index);
+	int GetNumAssets();
 	bool GetContinueGame();
 	void SetContinueGame(bool isContinuing);
 	bool GetSuccess();
@@ -61,15 +63,21 @@ public:
 	bool GetCannonFiring();
 	float GetCannonAngle();
 	void SetCannonAngle(float angle);
-	GGStaticAsset* GetProjectile();
+	GGStaticAsset* GetProjectile(int index);
+	int GetNumProjectiles();
 	float GetCannonLength();
+	void MakeProjectileVisible(int index);
+	void UpdateAmmunitionCount(int amt);
 
 private:
 	GGSheetAsset cannonAsset;
 	GGStaticAsset backgroundAsset;
-	GGStaticAsset moneyAsset;
+	std::vector<GGStaticAsset*> moneyAssets;
+	GGStaticAsset moneyAssetIcon;
+	GGTextAsset ammunitionCountAsset;
 	bool cannonFiring;
 	float cannonAngle;
+
 };
 
 #endif

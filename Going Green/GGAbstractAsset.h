@@ -92,7 +92,22 @@ private:
 	// sf::RectangleShape assetBody;
 };
 
-class GGTimerAsset : public GGAbstractAsset {
+class GGTextAsset : public GGAbstractAsset {
+public:
+	GGTextAsset(sf::Vector2f pos, unsigned int size, const std::string fontFileName, sf::Color clr);
+	~GGTextAsset();
+	void SetText(std::string txt);
+	virtual void Draw() override;
+	virtual void SetPos(sf::Vector2f pos) override;
+	void SetSize(int sz);
+
+private:
+	sf::Font assetFont;
+	sf::Text assetText;
+
+};
+
+class GGTimerAsset : public GGTextAsset {
 public:
 	GGTimerAsset(sf::Vector2f pos, unsigned int size, const std::string fontFileName, int sec, int ms, sf::Color clr); // Minimal3x5.ttf
 	~GGTimerAsset();
@@ -101,16 +116,11 @@ public:
 	bool TimerCompleted();
 	void RestartTimer();
 	void SetTimer(sf::Vector2u time);
-	virtual void Draw() override;
-	virtual void SetPos(sf::Vector2f pos) override;
 	void StartTimer();
 	void StopTimer();
-	void SetSize(int sz);
 	bool GetTimerStarted();
 
 private:
-	sf::Font timerFont;
-	sf::Text timerText;
 	char timerStr[128];
 	int second;
 	int millisecond;

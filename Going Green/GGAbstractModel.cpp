@@ -13,7 +13,12 @@ std::vector<GGAbstractAsset*>& GGAbstractModel::GetAssets() {
 void GGAbstractModel::AddAsset(GGAbstractAsset* asset) {
 	assets.push_back(asset);
 }
-
+void GGAbstractModel::InsertAsset(GGAbstractAsset* asset, int index) {
+	assets.insert(assets.begin() + index, asset);
+}
+int GGAbstractModel::GetNumAssets() {
+	return (int) assets.size();
+}
 bool GGAbstractModel::GetContinueGame() {
 	return continueGame;
 }
@@ -95,12 +100,18 @@ GGCannonGameModel::GGCannonGameModel() : cannonAsset(sf::Vector2f(0, 0), "Assets
 										 sf::Vector2u(4, 3), false, 10), backgroundAsset(sf::Vector2f(0,0), "Assets/Animations/cannon_game/court_level_1.png"),
 										 cannonFiring(false),
 										 cannonAngle(0),
-										 moneyAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_bag_temp.png") {
+										 moneyAssetIcon(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_flying.png"),
+										 ammunitionCountAsset(sf::Vector2f(0, 0), 70, "Assets/Fonts/Minimal5x7.ttf", sf::Color::White) {
 	AddAsset(&backgroundAsset);
 	backgroundAsset.Scale(sf::Vector2f(4, 4));
 	backgroundAsset.SetOrigin(0, 0);
-	AddAsset(&moneyAsset);
-	AddAsset(&cannonAsset);
+
+	for (int i = 0; i < GetNumProjectiles(); i++) {
+		GGStaticAsset* moneyAsset = new GGStaticAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_flying.png");
+		moneyAssets.push_back(moneyAsset);
+		// AddAsset(moneyAsset);
+	}
+
 	float scale = 5.0f;
 	cannonAsset.Scale(sf::Vector2f(scale, scale));
 	cannonAsset.SetOrigin(sf::Vector2f(cannonAsset.GetTextureSize().x / 3.75f, ceil(cannonAsset.GetTextureSize().y / 1.67f)));
@@ -111,11 +122,25 @@ GGCannonGameModel::GGCannonGameModel() : cannonAsset(sf::Vector2f(0, 0), "Assets
 	GetTimer()->SetPos(sf::Vector2f(1175, 5));
 	GetTimer()->StartTimer();
 
-	
-	moneyAsset.Scale(sf::Vector2f(.1f, .1f));
-	moneyAsset.SetPos(sf::Vector2f(cannonAsset.GetPos().x + GetCannonLength(), cannonAsset.GetPos().y));
+	for (int i = 0; i < GetNumProjectiles(); i++) {
+		moneyAssets[i]->Scale(sf::Vector2f(4, 4));
+		moneyAssets[i]->SetPos(sf::Vector2f(cannonAsset.GetPos().x + GetCannonLength(), cannonAsset.GetPos().y));
+	}
+
+	moneyAssetIcon.SetPos(sf::Vector2f(50, 50));
+	moneyAssetIcon.Scale(sf::Vector2f(4, 4));
+	AddAsset(&moneyAssetIcon);
+	ammunitionCountAsset.SetPos(sf::Vector2f(90, 5));
+	ammunitionCountAsset.SetText("x 10");
+	AddAsset(&ammunitionCountAsset);
+
+	AddAsset(&cannonAsset);
 }
-GGCannonGameModel::~GGCannonGameModel() {}
+GGCannonGameModel::~GGCannonGameModel() {
+	for (auto asset : moneyAssets) {
+		delete asset;
+	}
+}
 GGSheetAsset* GGCannonGameModel::GetCannonAsset() {
 	return &cannonAsset;
 }
@@ -136,9 +161,20 @@ void GGCannonGameModel::SetCannonAngle(float angle) {
 	cannonAsset.SetRotation(angle + 18.5f);
 	cannonAngle = angle;
 }
-GGStaticAsset* GGCannonGameModel::GetProjectile() {
-	return &moneyAsset;
+GGStaticAsset* GGCannonGameModel::GetProjectile(int index) {
+	return moneyAssets[index];
 }
 float GGCannonGameModel::GetCannonLength() {
 	return 90.0f;
+}
+int GGCannonGameModel::GetNumProjectiles() {
+	return 10;
+}
+void GGCannonGameModel::MakeProjectileVisible(int index) {
+	InsertAsset(moneyAssets[index], GetNumAssets() - 1);
+}
+void GGCannonGameModel::UpdateAmmunitionCount(int amt) {
+	char str[128];
+	sprintf_s(str, "x %d", amt);
+	ammunitionCountAsset.SetText(str);
 }

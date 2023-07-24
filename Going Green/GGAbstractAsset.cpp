@@ -159,15 +159,32 @@ sf::Vector2u GGStaticAsset::GetTextureSize() {
 	return assetTexture.getSize();
 }
 
-GGTimerAsset::GGTimerAsset(sf::Vector2f pos, unsigned int size, const std::string fontFileName, int sec, int ms, sf::Color clr) : GGAbstractAsset(pos), second(sec), millisecond(ms), startTime(sec, ms), timerStarted(false) {
-	timerFont.loadFromFile(fontFileName);
-	timerText.setFont(timerFont);
-	timerText.setCharacterSize(size);
-	timerText.setFillColor(clr);
+GGTextAsset::GGTextAsset(sf::Vector2f pos, unsigned int size, const std::string fontFileName, sf::Color clr) : GGAbstractAsset(pos) {
+	assetFont.loadFromFile(fontFileName);
+	assetText.setFont(assetFont);
+	assetText.setCharacterSize(size);
+	assetText.setFillColor(clr);
+	assetText.setPosition(pos);
+}
+GGTextAsset::~GGTextAsset() {}
+void GGTextAsset::SetText(std::string txt) {
+	assetText.setString(txt);
+}
+void GGTextAsset::Draw() {
+	GGWindow::Instance().GetWindow().draw(assetText);
+}
+void GGTextAsset::SetPos(sf::Vector2f pos) {
+	assetText.setPosition(pos);
+	GGAbstractAsset::SetPos(pos);
+}
+void GGTextAsset::SetSize(int sz) {
+	assetText.setCharacterSize(sz);
+}
+
+GGTimerAsset::GGTimerAsset(sf::Vector2f pos, unsigned int size, const std::string fontFileName, int sec, int ms, sf::Color clr) : GGTextAsset(pos, size, fontFileName, clr), second(sec), millisecond(ms), startTime(sec, ms), timerStarted(false) {
 	sprintf_s(timerStr, "%d.0%d", second, millisecond);
-	timerText.setString(timerStr);
-	timerText.setPosition(pos);
-} // : GGAbstractAsset(pos), timerFont(fontFileName, size), timerStr("", timerFont, size), second(sec), millisecond(ms) {}
+	SetText(timerStr);
+}
 GGTimerAsset::~GGTimerAsset() {}
 void GGTimerAsset::TickSec() {
 	second--;
@@ -179,7 +196,7 @@ void GGTimerAsset::TickSec() {
 	}
 	else {
 		sprintf_s(timerStr, "%d.%d", second, millisecond);
-	}	timerText.setString(timerStr);
+	}	SetText(timerStr);
 }
 void GGTimerAsset::TickMS() {
 	millisecond--;
@@ -196,10 +213,7 @@ void GGTimerAsset::TickMS() {
 	else {
 		sprintf_s(timerStr, "%d.%d", second, millisecond);
 	}
-	timerText.setString(timerStr);
-}
-void GGTimerAsset::Draw() {
-	GGWindow::Instance().GetWindow().draw(timerText);
+	SetText(timerStr);
 }
 bool GGTimerAsset::TimerCompleted() {
 	return second == 0 && millisecond == 0;
@@ -212,18 +226,11 @@ void GGTimerAsset::RestartTimer() {
 	second = (int) startTime.x;
 	millisecond = (int) startTime.y;
 }
-void GGTimerAsset::SetPos(sf::Vector2f pos) {
-	timerText.setPosition(pos);
-	GGAbstractAsset::SetPos(pos);
-}
 void GGTimerAsset::StartTimer() {
 	timerStarted = true;
 }
 void GGTimerAsset::StopTimer() {
 	timerStarted = false;
-}
-void GGTimerAsset::SetSize(int sz) {
-	timerText.setCharacterSize(sz);
 }
 bool GGTimerAsset::GetTimerStarted() {
 	return timerStarted;

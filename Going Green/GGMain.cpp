@@ -20,7 +20,17 @@ int main()
     GGCannonTickObserver cannonClickObs(cannonView, cannonCtrl);
     GGCannonFireObserver cannonFireObs(cannonView, cannonCtrl);
     GGCannonMoveObserver cannonMoveObs(cannonView, cannonCtrl);
-    GGProjectileTickObserver projectileTickObs(cannonView, cannonCtrl, 0);
+
+    GGProjectileTickObserver projectileTickObs0(cannonView, cannonCtrl, 0);
+    GGProjectileTickObserver projectileTickObs1(cannonView, cannonCtrl, 1);
+    GGProjectileTickObserver projectileTickObs2(cannonView, cannonCtrl, 2);
+    GGProjectileTickObserver projectileTickObs3(cannonView, cannonCtrl, 3);
+    GGProjectileTickObserver projectileTickObs4(cannonView, cannonCtrl, 4);
+    GGProjectileTickObserver projectileTickObs5(cannonView, cannonCtrl, 5);
+    GGProjectileTickObserver projectileTickObs6(cannonView, cannonCtrl, 6);
+    GGProjectileTickObserver projectileTickObs7(cannonView, cannonCtrl, 7);
+    GGProjectileTickObserver projectileTickObs8(cannonView, cannonCtrl, 8);
+    GGProjectileTickObserver projectileTickObs9(cannonView, cannonCtrl, 9);
     subjMgr.AddStage(testStage);
 
 

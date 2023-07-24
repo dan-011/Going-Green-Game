@@ -129,11 +129,11 @@ void GGProjectileTickObserver::Update() {
 	if (ctrl.IsCannonFiring() && currentTime == sf::milliseconds(0)) { // if jumping has been initiated and we have not recorded start time
 		currentTime = view.GetElapsedTime();
 	}
-	else if (ctrl.ProjectileFinised()) { // if jumping has finished
+	else if (ctrl.ProjectileFinised(projectileIndex)) { // if jumping has finished
 		currentTime = sf::milliseconds(0);
 	}
-	if (ctrl.hasFired && view.GetElapsedTime() - currentTime >= deltaT) { // if we are currently jumping
-		ctrl.ProjectileTick(deltaT);
+	if (ctrl.ProjectileFired(projectileIndex) && view.GetElapsedTime() - currentTime >= deltaT) { // if we are currently jumping
+		ctrl.ProjectileTick(deltaT, projectileIndex);
 		currentTime = view.GetElapsedTime();
 	}
 } // limit ammunition and create that many observers

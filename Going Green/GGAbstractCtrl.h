@@ -40,6 +40,13 @@ private:
 	GGTestGameOverModel gOMdl;
 };
 
+
+enum GGPROJECTILE_STATUS {
+	LOADED,
+	FIRED,
+	LANDED
+};
+
 class GGCannonGameCtrl : public GGAbstractCtrl {
 public:
 	GGCannonGameCtrl();
@@ -49,15 +56,19 @@ public:
 	void AnimateCannonFire();
 	bool IsCannonFiring();
 	void ChangeCannonAngle(sf::Vector2i mousePos);
-	void ProjectileTick(sf::Time deltaT);
+	void ProjectileTick(sf::Time deltaT, int index);
 	// virtual void EndGame();
+	bool ProjectileFired(int index);
+	bool ProjectileFinised(int index);
 
-	bool ProjectileFinised(); // temp
-	bool hasFired = false; // REMOVE
 private:
 	GGCannonGameModel cannonMdl;
-	sf::Vector2f velocity;
+	std::vector<sf::Vector2f> velocities;
+	std::vector<GGPROJECTILE_STATUS> projectileStatuses;
+	std::vector<int> projectileDelays;
 	const sf::Vector2f gravity;
-	int fireDelayCount;
+	sf::Vector2f projectileAnchorPoint;
+	int curProjectileAsset;
+
 };
 #endif
