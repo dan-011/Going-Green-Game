@@ -23,7 +23,7 @@ int main()
     GGRestartGameObserver restartGameObs(testGameOverView, testGameOverCtrl);
     GGNewsButtonTickObserver buttonTickObs(newsView, newsCtrl, sf::milliseconds(55));
     GGNewsButtonClickObserver buttonClickObs(newsView, newsCtrl);
-    subjMgr.AddStage(newsStage);
+    //subjMgr.AddStage(newsStage);
     subjMgr.AddStage(testStage);
 
     subjMgr.PlayGame();

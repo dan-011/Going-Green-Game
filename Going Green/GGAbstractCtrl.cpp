@@ -111,13 +111,13 @@ void GGNewsCtrl::PressButton(int button)
 
 void GGNewsCtrl::ProcessClick(sf::Vector2f mousePos)
 {
-	if (newsMdl.GetButton(0)->GetRect().getGlobalBounds().contains(mousePos))
+	if (newsMdl.GetButton(0)->GetGlobalBounds().contains(mousePos))
 	{
-		cout << "button 1 click" << endl;
+		PressButton(0);
 	}
-	else if (newsMdl.GetButton(1)->GetRect().getGlobalBounds().contains(mousePos))
+	else if (newsMdl.GetButton(1)->GetGlobalBounds().contains(mousePos))
 	{
-		cout << "button 2 click" << endl;
+		PressButton(1);
 	}
 }
 
