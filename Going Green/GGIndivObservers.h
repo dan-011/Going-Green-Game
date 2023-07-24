@@ -77,4 +77,67 @@ private:
 	GGView& view;
 	GGTestGameOverCtrl& ctrl;
 };
+
+class GGClockMSObserver : public GGAbstractObserver {
+public:
+	GGClockMSObserver(GGView& vw, GGAbstractCtrl& controller);
+	~GGClockMSObserver();
+	virtual void Update() override;
+
+private:
+	GGView& view;
+	GGAbstractCtrl& ctrl;
+	sf::Time deltaT;
+	sf::Time currentTime;
+};
+
+class GGCannonFireObserver : public GGAbstractObserver {
+public:
+	GGCannonFireObserver(GGView& vw, GGCannonGameCtrl& controller);
+	~GGCannonFireObserver();
+	virtual void Update() override;
+
+private:
+	GGView& view;
+	GGCannonGameCtrl& ctrl;
+	bool clickSwitch;
+};
+
+class GGCannonTickObserver : public GGAbstractObserver {
+public:
+	GGCannonTickObserver(GGView& vw, GGCannonGameCtrl& controller);
+	~GGCannonTickObserver();
+	virtual void Update() override;
+
+private:
+	GGView& view;
+	GGCannonGameCtrl& ctrl;
+	sf::Time deltaT;
+	sf::Time currentTime;
+};
+
+class GGCannonMoveObserver : public GGAbstractObserver {
+public:
+	GGCannonMoveObserver(GGView& vw, GGCannonGameCtrl& controller);
+	~GGCannonMoveObserver();
+	virtual void Update() override;
+
+private:
+	GGView& view;
+	GGCannonGameCtrl& ctrl;
+};
+
+class GGProjectileTickObserver : public GGAbstractObserver {
+public:
+	GGProjectileTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index);
+	~GGProjectileTickObserver();
+	virtual void Update() override;
+
+private:
+	GGView& view;
+	GGCannonGameCtrl& ctrl;
+	sf::Time deltaT;
+	sf::Time currentTime;
+	int projectileIndex;
+};
 #endif

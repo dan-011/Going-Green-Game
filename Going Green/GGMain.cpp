@@ -8,16 +8,19 @@ int main()
     GGSubjectManager subjMgr;
 
     /* Test Pump Game */
-    GGPumpCtrl testCtrl;
+    GGCannonGameCtrl cannonCtrl;
     GGTestGameOverCtrl testGameOverCtrl;
-    GGView testView(&testCtrl);
+    GGView cannonView(&cannonCtrl);
     GGView testGameOverView(&testGameOverCtrl);
-    GGStage testStage(&testView, &testGameOverView);
-    GGPumpClickObserver pumpClickObs(testView, testCtrl);
-    GGPumpTickObserver pumptickObs(testView, testCtrl, sf::milliseconds(55));
-    GGTestGameOverTick gameOberTickObs(testGameOverView, testGameOverCtrl);
-    GGEndGameObserver endGameObs(testView, testCtrl);
+    GGStage testStage(&cannonView, &testGameOverView);
+
+    GGClockMSObserver clockMSObs(cannonView, cannonCtrl);
+    GGTestGameOverTick gameOverTickObs(testGameOverView, testGameOverCtrl);
     GGRestartGameObserver restartGameObs(testGameOverView, testGameOverCtrl);
+    GGCannonTickObserver cannonClickObs(cannonView, cannonCtrl);
+    GGCannonFireObserver cannonFireObs(cannonView, cannonCtrl);
+    GGCannonMoveObserver cannonMoveObs(cannonView, cannonCtrl);
+    GGProjectileTickObserver projectileTickObs(cannonView, cannonCtrl, 0);
     subjMgr.AddStage(testStage);
 
 
