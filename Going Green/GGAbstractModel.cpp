@@ -83,6 +83,38 @@ void GGPumpModel::ResetData() {
 	pump->SetCurFrame(0);
 	maxedOut = false;
 	totalPumps = 0;
+	transition->SetDrawing(true);
+	oil->SetFinishedAnimating(false);
+	oil->SetStart(false);
+}
+
+GGNewsModel::GGNewsModel(int maxReports) : goalReports(maxReports), numReports(0)
+{
+	button1 = new GGButton(sf::Vector2f(200, 300), "INCREDI");
+	button2 = new GGButton(sf::Vector2f(400, 300), "MISLEAD");
+	AddAsset(button1);
+	AddAsset(button2);
+}
+
+GGNewsModel::~GGNewsModel()
+{
+	delete(button1);
+	delete(button2);
+}
+
+GGButton* GGNewsModel::GetButton(int index)
+{
+	if (index == 0)
+	{
+		return button1;
+	}
+	else
+		return button2;
+}
+
+void GGNewsModel::ResetData()
+{
+	numReports = 0;
 }
  
 GGTestGameOverModel::GGTestGameOverModel() : gameOverScreen(new GGListAsset(sf::Vector2f(400, 400), vector<std::string> {

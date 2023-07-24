@@ -47,6 +47,19 @@ private:
 	bool maxedOut;
 };
 
+class GGNewsModel : public GGAbstractModel {
+public:
+	GGNewsModel(int maxReports);
+	virtual ~GGNewsModel();
+	GGButton* GetButton(int index);
+	void ResetData();
+private:
+	GGButton* button1;
+	GGButton* button2;
+	int goalReports;
+	int numReports;
+};
+
 class GGTestGameOverModel : public GGAbstractModel {
 public:
 	GGTestGameOverModel();

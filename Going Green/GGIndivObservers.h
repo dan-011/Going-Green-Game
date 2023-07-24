@@ -43,6 +43,30 @@ private:
 	sf::Time currentTime;
 };
 
+class GGNewsButtonTickObserver : public GGAbstractObserver {
+public:
+	GGNewsButtonTickObserver(GGView& vw, GGNewsCtrl& controller, sf::Time dt);
+	~GGNewsButtonTickObserver();
+	virtual void Update() override;
+	
+
+private:
+	GGView& view;
+	GGNewsCtrl& ctrl;
+	sf::Time deltaT;
+	sf::Time currentTime;
+};
+
+class GGNewsButtonClickObserver : public GGAbstractObserver
+{
+public:
+	GGNewsButtonClickObserver(GGView& vw, GGNewsCtrl& controller);
+	~GGNewsButtonClickObserver();
+	virtual void Update() override;
+private:
+	GGView& view;
+	GGNewsCtrl& ctrl;
+};
 class GGTestGameOverTick : public GGAbstractObserver {
 public:
 	GGTestGameOverTick(GGView& vw, GGTestGameOverCtrl& controller);

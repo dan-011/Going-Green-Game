@@ -29,8 +29,10 @@ public:
 	virtual void SetCurFrame(int frame);
 	virtual int GetCurFrame();
 	virtual void SetScale(sf::Vector2f scale) override;
-	virtual void Start();
+	virtual void SetStart(bool start);
 	virtual bool CheckFinishedAnimating();
+	virtual void SetFinishedAnimating(bool finished);
+	virtual sf::RectangleShape GetRect();
 
 private:
 	sf::Texture assetTexture;
@@ -73,5 +75,21 @@ private:
 	sf::Text subtitle;
 	sf::RectangleShape background;
 	bool isDrawing;
+};
+
+class GGButton : public GGAbstractAsset {
+public:
+	GGButton(sf::Vector2f pos, std::string text);
+	virtual void Draw() override;
+	virtual void SetScale(sf::Vector2f scale) override;
+	virtual void SetClicked(bool click);
+	virtual bool GetClicked();
+	virtual sf::RectangleShape GetRect();
+	//virtual bool SetText();
+private:
+	sf::Text buttonText;
+	sf::Font font;
+	bool isClicked;
+	GGSheetAsset buttonBody;
 };
 #endif

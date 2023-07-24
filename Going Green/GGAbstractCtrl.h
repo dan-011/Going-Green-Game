@@ -30,6 +30,20 @@ private:
 
 };
 
+class GGNewsCtrl : public GGAbstractCtrl {
+public:
+	GGNewsCtrl();
+	virtual ~GGNewsCtrl();
+	virtual GGAbstractModel* GetModel() override;
+	virtual void EndGame();
+	virtual void WinGame();
+	virtual bool IsAnimatingButton();
+	virtual void ClearButtonAnim();
+	virtual void PressButton(int button);
+	virtual void ProcessClick(sf::Vector2f mousePos);
+private:
+	GGNewsModel newsMdl;
+};
 class GGTestGameOverCtrl : public GGAbstractCtrl {
 public:
 	GGTestGameOverCtrl();

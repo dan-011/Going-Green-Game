@@ -40,6 +40,45 @@ void GGPumpTickObserver::Update() {
 	ctrl.CheckGameWon();
 }
 
+GGNewsButtonTickObserver::GGNewsButtonTickObserver(GGView& vw, GGNewsCtrl& controller, sf::Time dt) : view(vw), ctrl(controller), deltaT(dt)
+{
+	view.AddObserver(this);
+}
+
+GGNewsButtonTickObserver::~GGNewsButtonTickObserver(){}
+
+void GGNewsButtonTickObserver::Update()
+{
+	if (currentTime == sf::milliseconds(0))
+	{
+		currentTime = view.GetElapsedTime();
+	}
+
+	if (view.GetElapsedTime() - currentTime >= deltaT && ctrl.IsAnimatingButton())
+	{
+		ctrl.ClearButtonAnim();
+		currentTime = view.GetElapsedTime();
+	}
+}
+
+GGNewsButtonClickObserver::GGNewsButtonClickObserver(GGView& vw, GGNewsCtrl& controller) : view(vw), ctrl(controller)
+{
+	view.AddObserver(this);
+}
+
+GGNewsButtonClickObserver::~GGNewsButtonClickObserver()
+{
+
+}
+
+void GGNewsButtonClickObserver::Update()
+{
+	if (view.GetEvent().type == sf::Event::MouseButtonPressed)
+	{
+		sf::Vector2i mousePos = (sf::Mouse::getPosition(GGWindow::Instance().GetWindow()));
+		ctrl.ProcessClick(sf::Vector2f(mousePos));
+	}
+}
 
 GGTestGameOverTick::GGTestGameOverTick(GGView& vw, GGTestGameOverCtrl& controller) : view(vw), ctrl(controller), deltaT(sf::milliseconds(60)), currentTime(sf::milliseconds(0)) {
 	view.AddObserver(this);
