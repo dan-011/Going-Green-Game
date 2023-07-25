@@ -52,14 +52,51 @@ public:
 	GGNewsModel(int maxReports);
 	virtual ~GGNewsModel();
 	GGButton* GetButton(int index);
+	GGTextAsset* GetQuestionText();
+	int GetNumAnswers();
+	void SetNumAnswers(int nAnswers);
+	bool GoalMet();
 	void ResetData();
+	GGMinigameTransition* GetTransition();
 private:
 	GGButton* button1;
 	GGButton* button2;
+	GGMinigameTransition* transition;
+	GGStaticAsset* background;
+	GGStaticAsset* frame;
+	GGStaticAsset* questionBubble;
+	GGTextAsset* questionText;
 	int goalReports;
 	int numReports;
 };
 
+class GGStageTransitionModel : public GGAbstractModel
+{
+public:
+	GGStageTransitionModel(std::string tableSource, std::string envelopeSource, std::string letterSource);
+	virtual ~GGStageTransitionModel();
+	GGStaticAsset* GetEnvelope();
+	GGStaticAsset* GetLetter();
+	bool GetLetterMoved();
+	void SetLetterMoved(bool moved);
+	float GetLetterVelocity();
+	void SetLetterVelocity(float velocity);
+	float GetLetterDeceleration();
+	float GetEnvelopeVelocity();
+	void SetEnvelopeVelocity(float velocity);
+	float GetEnvelopeDeceleration();
+	void ResetData() override;
+
+private:
+	GGStaticAsset* table;
+	GGStaticAsset* envelope;
+	GGStaticAsset* letter;
+	float letterVelocity;
+	const float letterDeceleration;
+	float envelopeVelocity;
+	const float envelopeDeceleration;
+	bool letterMoved;
+};
 class GGTestGameOverModel : public GGAbstractModel {
 public:
 	GGTestGameOverModel();

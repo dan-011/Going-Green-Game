@@ -90,16 +90,38 @@ void GGPumpModel::ResetData() {
 
 GGNewsModel::GGNewsModel(int maxReports) : goalReports(maxReports), numReports(0)
 {
-	button1 = new GGButton(sf::Vector2f(200, 300), "INCREDI");
-	button2 = new GGButton(sf::Vector2f(400, 300), "MISLEAD");
+	button1 = new GGButton(sf::Vector2f(275, 550), "b1");
+	button2 = new GGButton(sf::Vector2f(1000, 550), "b2");
+	background = new GGStaticAsset(sf::Vector2f(0, 0), "Assets/Animations/tv_game/news_minigame_background1.png");
+	frame = new GGStaticAsset(sf::Vector2f(0, 0), "Assets/Animations/tv_game/news_frame.png");
+	transition = new GGMinigameTransition("Lobby!", "Fill in the sentence with the word\nthat supports corporate interest");
+	questionBubble = new GGStaticAsset(sf::Vector2f(640, 135), "Assets/Animations/tv_game/speech_bubble.png");
+	questionText = new GGTextAsset(sf::Vector2f(100, 100), 50, "Assets/Fonts/Minimal5x7.ttf", sf::Color(0x24222EFF));
+	questionText->SetText("q");
+	background->SetOrigin(0, 0);
+	frame->SetOrigin(0, 0);
+	background->Scale(sf::Vector2f(4, 4));
+	frame->Scale(sf::Vector2f(4, 4));
+	questionBubble->Scale(sf::Vector2f(4, 4));
+	AddAsset(background);
+	AddAsset(frame);
 	AddAsset(button1);
 	AddAsset(button2);
+	AddAsset(questionBubble);
+	AddAsset(questionText);
+	AddAsset(transition);
+	goalReports = maxReports;
 }
 
 GGNewsModel::~GGNewsModel()
 {
 	delete(button1);
 	delete(button2);
+	delete(background);
+	delete(frame);
+	delete(transition);
+	delete(questionText);
+	delete(questionBubble);
 }
 
 GGButton* GGNewsModel::GetButton(int index)
@@ -112,11 +134,108 @@ GGButton* GGNewsModel::GetButton(int index)
 		return button2;
 }
 
+int GGNewsModel::GetNumAnswers()
+{
+	return numReports;
+}
+
+void GGNewsModel::SetNumAnswers(int nAnswers)
+{
+	numReports = nAnswers;
+}
+
+bool GGNewsModel::GoalMet()
+{
+	return (numReports >= goalReports);
+}
 void GGNewsModel::ResetData()
 {
 	numReports = 0;
+	SetContinueGame(true);
+	SetSuccess(true);
+	transition->SetDrawing(true);
 }
- 
+
+GGMinigameTransition* GGNewsModel::GetTransition()
+{
+	return transition;
+}
+
+GGTextAsset* GGNewsModel::GetQuestionText()
+{
+	return questionText;
+}
+
+GGStageTransitionModel::GGStageTransitionModel(std::string tableSource, std::string envelopeSource, std::string letterSource) : letterDeceleration(1), envelopeDeceleration(-1), letterVelocity(0), envelopeVelocity(1), letterMoved(false)
+{
+	table = new GGStaticAsset(sf::Vector2f(0, 0), tableSource);
+	table->SetOrigin(0, 0);
+	table->Scale(sf::Vector2f(4, 4));
+	envelope = new GGStaticAsset(sf::Vector2f(640, -100), envelopeSource);
+	envelope->Scale(sf::Vector2f(4, 4));
+	letter = new GGStaticAsset(sf::Vector2f(640, 1075), letterSource);
+	letter->Scale(sf::Vector2f(4, 4));
+	AddAsset(table);
+	AddAsset(envelope);
+	AddAsset(letter);
+}
+
+GGStageTransitionModel::~GGStageTransitionModel()
+{
+	delete(table);
+	delete(envelope);
+	delete(letter);
+}
+
+GGStaticAsset* GGStageTransitionModel::GetEnvelope()
+{
+	return envelope;
+}
+
+GGStaticAsset* GGStageTransitionModel::GetLetter()
+{
+	return letter;
+}
+
+bool GGStageTransitionModel::GetLetterMoved()
+{
+	return letterMoved;
+}
+void GGStageTransitionModel::SetLetterMoved(bool moved)
+{
+	letterMoved = moved;
+}
+float GGStageTransitionModel::GetLetterVelocity()
+{
+	return letterVelocity;
+}
+void GGStageTransitionModel::SetLetterVelocity(float velocity)
+{
+	letterVelocity = velocity;
+}
+float GGStageTransitionModel::GetLetterDeceleration()
+{
+	return letterDeceleration;
+}
+
+float GGStageTransitionModel::GetEnvelopeVelocity()
+{
+	return envelopeVelocity;
+}
+void GGStageTransitionModel::SetEnvelopeVelocity(float velocity)
+{
+	envelopeVelocity = velocity;
+}
+float GGStageTransitionModel::GetEnvelopeDeceleration()
+{
+	return envelopeDeceleration;
+}
+
+void GGStageTransitionModel::ResetData()
+{
+
+}
+
 GGTestGameOverModel::GGTestGameOverModel() : gameOverScreen(new GGListAsset(sf::Vector2f(400, 400), vector<std::string> {
 	"Assets/Animations/test_game_over/frame0.png",
 	"Assets/Animations/test_game_over/frame1.png",

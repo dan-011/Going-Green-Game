@@ -66,6 +66,33 @@ public:
 private:
 	GGView& view;
 	GGNewsCtrl& ctrl;
+	bool clickSwitch = false;
+};
+
+class GGStageTransitionTickObserver : public GGAbstractObserver
+{
+public:
+	GGStageTransitionTickObserver(GGView& vw, GGStageTransitionCtrl& controller, sf::Time dt);
+	~GGStageTransitionTickObserver();
+	virtual void Update() override;
+private:
+	GGView& view;
+	GGStageTransitionCtrl& ctrl;
+	sf::Time currentTime;
+	sf::Time deltaT;
+};
+
+class GGStageTransitionClickObserver : public GGAbstractObserver
+{
+public:
+	GGStageTransitionClickObserver(GGView& vw, GGStageTransitionCtrl& controller);
+	~GGStageTransitionClickObserver();
+	virtual void Update() override;
+private:
+	GGView& view;
+	GGStageTransitionCtrl& ctrl;
+	bool clickSwitch = false;
+private:
 };
 class GGTestGameOverTick : public GGAbstractObserver {
 public:

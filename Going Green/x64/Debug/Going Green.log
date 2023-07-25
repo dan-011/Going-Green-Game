@@ -1,8 +1,7 @@
-﻿  GGAbstractAsset.cpp
-  GGAbstractCtrl.cpp
-  GGAbstractModel.cpp
+﻿  GGAbstractCtrl.cpp
   GGIndivObservers.cpp
   GGMain.cpp
+C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGMain.cpp(8,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   GGStage.cpp
   GGSubjectManager.cpp
   GGView.cpp

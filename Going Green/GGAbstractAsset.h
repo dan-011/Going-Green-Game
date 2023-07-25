@@ -105,11 +105,12 @@ public:
 	GGButton(sf::Vector2f pos, std::string text);
 	virtual void Draw() override;
 	virtual void SetClicked(bool click);
+	virtual void SetText(std::string text);
 	virtual void Scale(sf::Vector2f dims) override;
 	virtual bool GetClicked();
 	virtual sf::Vector2u GetTextureSize() override;
 	virtual sf::FloatRect GetGlobalBounds() override;
-	//virtual bool SetText();
+	virtual void SetCurFrame(int frame);
 private:
 	sf::Text buttonText;
 	sf::Font font;

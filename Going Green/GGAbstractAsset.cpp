@@ -122,6 +122,11 @@ void GGSheetAsset::SetFinishedAnimating(bool finished)
 
 void GGSheetAsset::SetCurFrame(int frame) {
 	curFrame = frame;
+	int row = curFrame / dimensions.x;
+	int col = curFrame % dimensions.x;
+	assetBlock.top = row * assetBlock.height;
+	assetBlock.left = col * assetBlock.width;
+	SetAssetBlock(assetBlock);
 }
 int GGSheetAsset::GetCurFrame() {
 	return curFrame;
@@ -232,21 +237,21 @@ sf::Vector2u GGMinigameTransition::GetTextureSize()
 	return sf::Vector2u(background.getTextureRect().width, background.getTextureRect().height);
 }
 
-GGButton::GGButton(sf::Vector2f pos, std::string text) : GGSpriteAsset(pos), isClicked(false), buttonBody(pos, "Assets/Animations/tv_game/button.png", sf::Vector2u(1, 1))
+GGButton::GGButton(sf::Vector2f pos, std::string text) : GGSpriteAsset(pos), isClicked(false), buttonBody(pos, "Assets/Animations/tv_game/button.png", sf::Vector2u(2, 2))
 {
 	buttonText.setString(text);
 	buttonText.setOrigin(round(buttonText.getGlobalBounds().width / 2), round(buttonText.getGlobalBounds().height / 2));
-	buttonText.setScale(2, 2);
+	buttonText.setScale(2.5, 2.5);
 	if (!font.loadFromFile("Assets/Fonts/Minimal5x7.ttf"))
 	{
 		std::cout << "Font load from file failure!" << endl;
 	}
 	buttonText.setFont(font);
 	buttonText.setPosition(buttonBody.GetPos());
-	buttonText.move(buttonText.getLocalBounds().width * -1, -50);
-	buttonBody.Scale(sf::Vector2f(4, 4));
+	buttonText.move(buttonText.getLocalBounds().width * -5.5, -60);
+	buttonBody.Scale(sf::Vector2f(6, 6));
 	//buttonText.setScale(sf::Vector2f(4, 4));
-	buttonText.setFillColor(sf::Color(0x000000FF));
+	buttonText.setFillColor(sf::Color(0x24222EFF));
 }
 void GGButton::Draw()
 {
@@ -260,10 +265,6 @@ void GGButton::Scale(sf::Vector2f scale)
 }
 void GGButton::SetClicked(bool click)
 {
-	if (click)
-	{
-		cout << "button clicked!" << endl;
-	}
 	isClicked = click;
 }
 bool GGButton::GetClicked()
@@ -271,6 +272,10 @@ bool GGButton::GetClicked()
 	return isClicked;
 }
 
+void GGButton::SetText(std::string text)
+{
+	buttonText.setString(text);
+}
 sf::Vector2u GGButton::GetTextureSize()
 {
 	return buttonBody.GetTextureSize();
@@ -280,6 +285,10 @@ sf::FloatRect GGButton::GetGlobalBounds()
 	return buttonBody.GetGlobalBounds();
 }
 
+void GGButton::SetCurFrame(int frame)
+{
+	buttonBody.SetCurFrame(frame);
+}
 GGStaticAsset::GGStaticAsset(sf::Vector2f pos, const std::string fileName) : GGSpriteAsset(pos) {
 	assetTexture.loadFromFile(fileName);
 	SetOrigin((float)assetTexture.getSize().x, (float)assetTexture.getSize().y);

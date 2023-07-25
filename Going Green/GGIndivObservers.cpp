@@ -49,7 +49,7 @@ GGNewsButtonTickObserver::~GGNewsButtonTickObserver(){}
 
 void GGNewsButtonTickObserver::Update()
 {
-	if (currentTime == sf::milliseconds(0))
+	if (currentTime == sf::milliseconds(0) || !ctrl.IsAnimatingButton())
 	{
 		currentTime = view.GetElapsedTime();
 	}
@@ -73,10 +73,79 @@ GGNewsButtonClickObserver::~GGNewsButtonClickObserver()
 
 void GGNewsButtonClickObserver::Update()
 {
-	if (view.GetEvent().type == sf::Event::MouseButtonPressed)
+	if (view.GetEvent().type == sf::Event::MouseButtonPressed && !clickSwitch)
 	{
 		sf::Vector2i mousePos = (sf::Mouse::getPosition(GGWindow::Instance().GetWindow()));
 		ctrl.ProcessClick(sf::Vector2f(mousePos));
+		clickSwitch = true;
+	}
+	else if (view.GetEvent().type == sf::Event::MouseButtonReleased && clickSwitch)
+	{
+		clickSwitch = false;
+	}
+}
+
+GGStageTransitionTickObserver::GGStageTransitionTickObserver(GGView& vw, GGStageTransitionCtrl& controller, sf::Time dt) : view(vw), ctrl(controller), deltaT(dt)
+{
+	view.AddObserver(this);
+}
+
+GGStageTransitionTickObserver::~GGStageTransitionTickObserver()
+{
+
+}
+
+void GGStageTransitionTickObserver::Update()
+{
+	if (currentTime == sf::milliseconds(0))
+	{
+		currentTime = view.GetElapsedTime();
+	}
+	if (view.GetElapsedTime() - currentTime >= deltaT)
+	{
+		if (ctrl.IsLetterMoving())
+		{
+			ctrl.MoveLetter();
+		}
+		if (ctrl.IsEnvelopeMoving())
+		{
+			ctrl.MoveEnvelope();
+		}
+		currentTime = view.GetElapsedTime();
+	}
+
+}
+
+GGStageTransitionClickObserver::GGStageTransitionClickObserver(GGView& vw, GGStageTransitionCtrl& controller) : view(vw), ctrl(controller)
+{
+	view.AddObserver(this);
+}
+
+GGStageTransitionClickObserver::~GGStageTransitionClickObserver()
+{
+
+}
+
+void GGStageTransitionClickObserver::Update()
+{
+	if (view.GetEvent().type == sf::Event::MouseButtonPressed && !clickSwitch)
+	{
+		clickSwitch = true;
+		if (!ctrl.HasLetterMoved())
+		{
+			if (!ctrl.IsEnvelopeMoving())
+			{
+				ctrl.MoveLetter();
+			}
+		}
+		else
+		{
+			ctrl.WinGame();
+		}
+	}
+	else if (view.GetEvent().type == sf::Event::MouseButtonReleased && clickSwitch)
+	{
+		clickSwitch = false;
 	}
 }
 
