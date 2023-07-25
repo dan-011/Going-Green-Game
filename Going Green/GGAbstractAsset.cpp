@@ -47,6 +47,9 @@ float GGSpriteAsset::GetRotation() {
 	return assetSprite.getRotation();
 }
 void GGSpriteAsset::NextAnimation() {}
+sf::FloatRect GGSpriteAsset::GetBoundingBox() {
+	return assetSprite.getGlobalBounds();
+}
 void GGSpriteAsset::Draw() {
 	GGWindow::Instance().GetWindow().draw(assetSprite);
 }
@@ -103,6 +106,11 @@ bool GGSheetAsset::AnimationCompleted() {
 }
 void GGSheetAsset::SetCurFrame(int frame) {
 	curFrame = frame;
+	int row = curFrame / dimensions.x;
+	int col = curFrame % dimensions.x;
+	assetBlock.top = row * assetBlock.height;
+	assetBlock.left = col * assetBlock.width;
+	SetAssetBlock(assetBlock);
 }
 int GGSheetAsset::GetCurFrame() {
 	return curFrame;
@@ -140,7 +148,7 @@ bool GGListAsset::AnimationCompleted() {
 	return curFrame == 0;
 }
 void GGListAsset::SetCurFrame(int frame) {
-	curFrame = frame;
+	curFrame = frame - 1;
 }
 int GGListAsset::GetCurFrame() {
 	return curFrame;

@@ -64,7 +64,9 @@ public:
 	float GetCannonAngle();
 	void SetCannonAngle(float angle);
 	GGStaticAsset* GetProjectile(int index);
+	GGSheetAsset* GetTarget(int index);
 	int GetNumProjectiles();
+	int GetNumTargets();
 	float GetCannonLength();
 	void MakeProjectileVisible(int index);
 	void UpdateAmmunitionCount(int amt);
@@ -73,6 +75,7 @@ private:
 	GGSheetAsset cannonAsset;
 	GGStaticAsset backgroundAsset;
 	std::vector<GGStaticAsset*> moneyAssets;
+	std::vector<GGSheetAsset*> targetAssets;
 	GGStaticAsset moneyAssetIcon;
 	GGTextAsset ammunitionCountAsset;
 	bool cannonFiring;

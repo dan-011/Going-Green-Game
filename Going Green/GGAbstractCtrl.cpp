@@ -6,6 +6,45 @@
 #include <iostream>
 using namespace std;
 #endif
+
+bool OnSegment(sf::Vector2f pi, sf::Vector2f pj, sf::Vector2f pk) {
+	return (min(pi.x, pj.x) <= pk.x) && (pk.x <= max(pi.x, pj.x)) && (min(pi.y, pj.y) <= pk.y) && (pk.y <= max(pi.y, pj.y));
+}
+double Direction(sf::Vector2f pi, sf::Vector2f pj, sf::Vector2f pk) {
+	sf::Vector2f diff1(pk.x - pi.x, pk.y - pi.y);
+	sf::Vector2f diff2(pj.x - pi.x, pj.y - pi.y);
+	return (diff1.x * diff2.y) - (diff2.x * diff1.y);
+}
+bool IsIntersect(sf::Vector2f p1S, sf::Vector2f p1E, sf::Vector2f p2S, sf::Vector2f p2E) {
+	sf::Vector2f p1 = p1S;
+	sf::Vector2f p2 = p1E;
+	sf::Vector2f p3 = p2S;
+	sf::Vector2f p4 = p2E;
+
+	double d1 = Direction(p3, p4, p1);
+	double d2 = Direction(p3, p4, p2);
+	double d3 = Direction(p1, p2, p3);
+	double d4 = Direction(p1, p2, p4);
+	if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) {
+		return true;
+	}
+	else if (d1 == 0 && OnSegment(p3, p4, p1)) {
+		return true;
+	}
+	else if (d2 == 0 && OnSegment(p3, p4, p2)) {
+		return true;
+	}
+	else if (d3 == 0 && OnSegment(p1, p2, p3)) {
+		return true;
+	}
+	else if (d4 == 0 && OnSegment(p1, p2, p4)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 GGAbstractCtrl::GGAbstractCtrl() {}
 GGAbstractCtrl::~GGAbstractCtrl() {
 }
@@ -62,6 +101,15 @@ GGCannonGameCtrl::GGCannonGameCtrl(): gravity(0.0f, .01f), curProjectileAsset(0)
 		projectileStatuses.push_back(LOADED);
 		projectileDelays.push_back(DELAY);
 	}
+
+	srand((unsigned int) time(NULL));
+	for (int i = 0; i < cannonMdl.GetNumTargets(); i++) {
+		targetHitStatuses.push_back(false);
+		// targetWaitTicks.push_back(rand() % 20);
+	}
+	targetWaitTicks.push_back(0);
+	targetWaitTicks.push_back(75);
+	targetWaitTicks.push_back(110);
 }
 GGCannonGameCtrl::~GGCannonGameCtrl() {}
 GGAbstractModel* GGCannonGameCtrl::GetModel() {
@@ -77,14 +125,38 @@ void GGCannonGameCtrl::FireCannon(sf::Vector2i mousePos) {
 	curProjectileAsset++;
 }
 void GGCannonGameCtrl::ProjectileTick(sf::Time deltaT, int index) {
-	if (projectileDelays[index]-- > 0) return;
+	if (projectileDelays[index]-- > 0 || projectileStatuses[index] == LANDED) return;
 	cannonMdl.MakeProjectileVisible(index);
 	float dt = (float) deltaT.asMilliseconds();
 	sf::Vector2f pos = cannonMdl.GetProjectile(index)->GetPos();
+	sf::Vector2f prevPos = pos;
 	pos.x = pos.x + (dt * velocities[index].x); // *horizontalTravelOffset);
 	pos.y = pos.y + (dt * velocities[index].y); // update position
 
 	velocities[index].y = velocities[index].y + (dt * gravity.y); // update velocity
+	cannonMdl.GetProjectile(index)->SetPos(pos);
+
+
+	for (int i = 0; i < cannonMdl.GetNumTargets(); i++) {
+		// line by y = 550
+		GGSheetAsset* target = cannonMdl.GetTarget(i);
+		sf::FloatRect targetBoundingBox = target->GetBoundingBox();
+		float leftEdge = targetBoundingBox.left;
+		float rightEdge = targetBoundingBox.left + targetBoundingBox.width;
+		sf::Vector2f p2S(leftEdge, 550);
+		sf::Vector2f p2E(rightEdge, 550);
+		if (IsIntersect(prevPos, pos, p2S, p2E)) {
+			targetHitStatuses[i] = true;
+			target->SetCurFrame(4);
+			target->SetPos(sf::Vector2f(target->GetPos().x - 10, target->GetPos().y));
+			pos = sf::Vector2f(-100, -100);
+			projectileStatuses[index] = LANDED;
+			break;
+		}
+	}
+	if (pos.y > 570 && prevPos.y < pos.y) {
+		projectileStatuses[index] = LANDED;
+	}
 	cannonMdl.GetProjectile(index)->SetPos(pos);
 }
 void GGCannonGameCtrl::AnimateCannonFire() {
@@ -123,5 +195,24 @@ bool GGCannonGameCtrl::ProjectileFired(int index) {
 	return projectileStatuses[index] == FIRED;
 }
 bool GGCannonGameCtrl::ProjectileFinised(int index) {
-	return cannonMdl.GetProjectile(index)->GetPos().y >= 720;
+	return projectileStatuses[index] == LANDED;
+}
+bool GGCannonGameCtrl::TargetHit(int index) {
+	return targetHitStatuses[index] == true;
+}
+void GGCannonGameCtrl::TargetTick(int index) {
+	if (targetWaitTicks[index]-- > 0) return;
+	GGSheetAsset* target = cannonMdl.GetTarget(index);
+	target->NextAnimation();
+	sf::Vector2f pos = target->GetPos();
+	int currentFrame = target->GetCurFrame();
+	int xOffset = -15;
+	if (currentFrame == 0) {
+		xOffset = 25;
+	}
+	if (currentFrame == 3) {
+		xOffset = -10;
+	}
+	
+	target->SetPos(sf::Vector2f(pos.x + xOffset, pos.y));
 }

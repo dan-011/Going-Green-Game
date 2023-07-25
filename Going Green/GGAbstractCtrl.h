@@ -3,6 +3,7 @@
 
 #include "GGAbstractModel.h"
 #include <cmath>
+#include <stdlib.h>
 
 class GGAbstractCtrl {
 public:
@@ -60,11 +61,15 @@ public:
 	// virtual void EndGame();
 	bool ProjectileFired(int index);
 	bool ProjectileFinised(int index);
+	bool TargetHit(int index);
+	void TargetTick(int index);
 
 private:
 	GGCannonGameModel cannonMdl;
 	std::vector<sf::Vector2f> velocities;
 	std::vector<GGPROJECTILE_STATUS> projectileStatuses;
+	std::vector<bool> targetHitStatuses;
+	std::vector<int> targetWaitTicks;
 	std::vector<int> projectileDelays;
 	const sf::Vector2f gravity;
 	sf::Vector2f projectileAnchorPoint;

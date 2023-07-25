@@ -131,6 +131,7 @@ void GGProjectileTickObserver::Update() {
 	}
 	else if (ctrl.ProjectileFinised(projectileIndex)) { // if jumping has finished
 		currentTime = sf::milliseconds(0);
+		return;
 	}
 	if (ctrl.ProjectileFired(projectileIndex) && view.GetElapsedTime() - currentTime >= deltaT) { // if we are currently jumping
 		ctrl.ProjectileTick(deltaT, projectileIndex);
@@ -138,3 +139,17 @@ void GGProjectileTickObserver::Update() {
 	}
 } // limit ammunition and create that many observers
 // make an asset for a projectile
+
+GGTargetTickObserver::GGTargetTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index) : view(vw), ctrl(controller), targetIndex(index), currentTime(sf::milliseconds(0)), deltaT(sf::milliseconds(200)) {
+	view.AddObserver(this);
+}
+GGTargetTickObserver::~GGTargetTickObserver() {}
+void GGTargetTickObserver::Update() {
+	if (currentTime == sf::milliseconds(0)) {
+		currentTime = view.GetElapsedTime();
+	}
+	if (!ctrl.TargetHit(targetIndex) && view.GetElapsedTime() - currentTime >= deltaT) { // if we are currently jumping
+		ctrl.TargetTick(targetIndex);
+		currentTime = view.GetElapsedTime();
+	}
+}

@@ -111,7 +111,13 @@ GGCannonGameModel::GGCannonGameModel() : cannonAsset(sf::Vector2f(0, 0), "Assets
 		moneyAssets.push_back(moneyAsset);
 		// AddAsset(moneyAsset);
 	}
-
+	for (int i = 0; i < GetNumTargets(); i++) {
+		GGSheetAsset* targetAsset = new GGSheetAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_catch.png", sf::Vector2u(5, 1), false, 4);
+		targetAsset->Scale(sf::Vector2f(5, 5));
+		targetAsset->SetPos(sf::Vector2f(1350, 600));
+		targetAssets.push_back(targetAsset);
+		AddAsset(targetAsset);
+	}
 	float scale = 5.0f;
 	cannonAsset.Scale(sf::Vector2f(scale, scale));
 	cannonAsset.SetOrigin(sf::Vector2f(cannonAsset.GetTextureSize().x / 3.75f, ceil(cannonAsset.GetTextureSize().y / 1.67f)));
@@ -140,6 +146,9 @@ GGCannonGameModel::~GGCannonGameModel() {
 	for (auto asset : moneyAssets) {
 		delete asset;
 	}
+	for (auto asset : targetAssets) {
+		delete asset;
+	}
 }
 GGSheetAsset* GGCannonGameModel::GetCannonAsset() {
 	return &cannonAsset;
@@ -164,11 +173,17 @@ void GGCannonGameModel::SetCannonAngle(float angle) {
 GGStaticAsset* GGCannonGameModel::GetProjectile(int index) {
 	return moneyAssets[index];
 }
+GGSheetAsset* GGCannonGameModel::GetTarget(int index) {
+	return targetAssets[index];
+}
 float GGCannonGameModel::GetCannonLength() {
 	return 90.0f;
 }
 int GGCannonGameModel::GetNumProjectiles() {
 	return 10;
+}
+int GGCannonGameModel::GetNumTargets() {
+	return 3;
 }
 void GGCannonGameModel::MakeProjectileVisible(int index) {
 	InsertAsset(moneyAssets[index], GetNumAssets() - 1);

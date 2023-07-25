@@ -140,4 +140,18 @@ private:
 	sf::Time currentTime;
 	int projectileIndex;
 };
+
+class GGTargetTickObserver : public GGAbstractObserver {
+public:
+	GGTargetTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index);
+	~GGTargetTickObserver();
+	virtual void Update() override;
+
+private:
+	GGView& view;
+	GGCannonGameCtrl& ctrl;
+	sf::Time deltaT;
+	sf::Time currentTime;
+	int targetIndex;
+};
 #endif

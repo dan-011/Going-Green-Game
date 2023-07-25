@@ -34,6 +34,7 @@ public:
 	virtual float GetRotation();
 	virtual void NextAnimation();
 	virtual void Draw() override;
+	virtual sf::FloatRect GetBoundingBox();
 	virtual sf::Vector2u GetTextureSize() = 0;
 
 protected:
