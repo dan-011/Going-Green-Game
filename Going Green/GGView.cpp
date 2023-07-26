@@ -8,6 +8,7 @@ GGView::~GGView() {}
 bool GGView::Show() {
 	sf::RenderWindow& window = GGWindow::Instance().GetWindow();
 	ctrl->ResetMdl();
+	model->GetTimer()->StartTimer();
 	while (model->GetContinueGame()) {
 		window.pollEvent(GetEvent()); // check to make sure this works as intended
 		Notify();

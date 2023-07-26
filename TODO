@@ -1,7 +1,7 @@
 - Implement composite view for multiple mini games in a stage (includes random selection/shuffle of mini games)
-- Implement cannon mini game
-- Implement newspaper mini game
-- Implement oil mini game
-- Implement static screens
+- Implement SFX
+- Implement continuous music
+- Create game over and game start
+- Create subsequent cannon game stages
 - Implement changing intensity for subsequent changes
 - Streamline creation of MVC instances in Main

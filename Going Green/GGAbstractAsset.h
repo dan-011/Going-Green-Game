@@ -130,4 +130,6 @@ private:
 
 };
 
+class GGAudioAsset : public GGAbstractAsset {
+};
 #endif

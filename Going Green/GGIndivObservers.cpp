@@ -140,7 +140,7 @@ void GGProjectileTickObserver::Update() {
 } // limit ammunition and create that many observers
 // make an asset for a projectile
 
-GGTargetTickObserver::GGTargetTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index) : view(vw), ctrl(controller), targetIndex(index), currentTime(sf::milliseconds(0)), deltaT(sf::milliseconds(200)) {
+GGTargetTickObserver::GGTargetTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index, sf::Time dt) : view(vw), ctrl(controller), targetIndex(index), currentTime(sf::milliseconds(0)), deltaT(dt) {
 	view.AddObserver(this);
 }
 GGTargetTickObserver::~GGTargetTickObserver() {}

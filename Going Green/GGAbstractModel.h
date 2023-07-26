@@ -11,6 +11,7 @@ public:
 	std::vector<GGAbstractAsset*>& GetAssets();
 	void AddAsset(GGAbstractAsset* asset);
 	void InsertAsset(GGAbstractAsset* asset, int index);
+	void RemoveAsset(int index);
 	int GetNumAssets();
 	bool GetContinueGame();
 	void SetContinueGame(bool isContinuing);
@@ -53,6 +54,12 @@ private:
 	GGListAsset* gameOverScreen; // change to object
 };
 
+enum GGPROJECTILE_STATUS {
+	LOADED,
+	FIRED,
+	LANDED
+};
+
 class GGCannonGameModel : public GGAbstractModel {
 public:
 	GGCannonGameModel();
@@ -70,6 +77,16 @@ public:
 	float GetCannonLength();
 	void MakeProjectileVisible(int index);
 	void UpdateAmmunitionCount(int amt);
+	sf::Vector2f GetVelocity(int index);
+	void SetVelocity(int index, sf::Vector2f vel);
+	GGPROJECTILE_STATUS GetProjectileStatus(int index);
+	void SetProjectileStatus(int index, GGPROJECTILE_STATUS status);
+	bool GetTargetHitStatus(int index);
+	void SetTargetHitStatus(int index, bool status);
+	int GetProjectileDelay(int index);
+	int GetCurProjectileAsset();
+	void SetCurProjectileAsset(int index);
+	int TargetWaitTick(int index);
 
 private:
 	GGSheetAsset cannonAsset;
@@ -80,7 +97,13 @@ private:
 	GGTextAsset ammunitionCountAsset;
 	bool cannonFiring;
 	float cannonAngle;
-
+	std::vector<int> targetWaitTicks;
+	std::vector<sf::Vector2f> velocities;
+	std::vector<GGPROJECTILE_STATUS> projectileStatuses;
+	std::vector<bool> targetHitStatuses;
+	std::vector<int> projectileDelays;
+	bool first;
+	int curProjectileAsset;
 };
 
 #endif

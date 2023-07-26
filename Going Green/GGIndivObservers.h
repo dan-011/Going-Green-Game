@@ -143,7 +143,7 @@ private:
 
 class GGTargetTickObserver : public GGAbstractObserver {
 public:
-	GGTargetTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index);
+	GGTargetTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index, sf::Time dt);
 	~GGTargetTickObserver();
 	virtual void Update() override;
 

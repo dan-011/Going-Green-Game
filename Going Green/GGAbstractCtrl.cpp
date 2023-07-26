@@ -1,6 +1,5 @@
 #include "GGAbstractCtrl.h"
 #define PI 3.14159265359f
-#define DELAY 15
 #define DEBUG 0
 #ifdef DEBUG
 #include <iostream>
@@ -95,45 +94,35 @@ void GGTestGameOverCtrl::RestartGame() {
 
 }
 
-GGCannonGameCtrl::GGCannonGameCtrl(): gravity(0.0f, .01f), curProjectileAsset(0) {
-	for (int i = 0; i < cannonMdl.GetNumProjectiles(); i++) {
-		velocities.push_back(sf::Vector2f(0, 0));
-		projectileStatuses.push_back(LOADED);
-		projectileDelays.push_back(DELAY);
-	}
-
-	srand((unsigned int) time(NULL));
-	for (int i = 0; i < cannonMdl.GetNumTargets(); i++) {
-		targetHitStatuses.push_back(false);
-		// targetWaitTicks.push_back(rand() % 20);
-	}
-	targetWaitTicks.push_back(0);
-	targetWaitTicks.push_back(75);
-	targetWaitTicks.push_back(110);
-}
+GGCannonGameCtrl::GGCannonGameCtrl(): gravity(0.0f, .01f) {}
 GGCannonGameCtrl::~GGCannonGameCtrl() {}
 GGAbstractModel* GGCannonGameCtrl::GetModel() {
 	return &cannonMdl;
 }
 void GGCannonGameCtrl::FireCannon(sf::Vector2i mousePos) {
 	cannonMdl.SetCannonFiring(true);
+	int curProjectileAsset = cannonMdl.GetCurProjectileAsset();
 	if (curProjectileAsset >= cannonMdl.GetNumProjectiles()) return;
-	velocities[curProjectileAsset].x = (mousePos.x - cannonMdl.GetCannonAsset()->GetPos().x) / 400;
-	velocities[curProjectileAsset].y = (mousePos.y - cannonMdl.GetCannonAsset()->GetPos().y) / 200;
-	projectileStatuses[curProjectileAsset] = FIRED;
+	float velX = (mousePos.x - cannonMdl.GetCannonAsset()->GetPos().x) / 400;
+	float velY = (mousePos.y - cannonMdl.GetCannonAsset()->GetPos().y) / 200;
+	cannonMdl.SetVelocity(curProjectileAsset, sf::Vector2f(velX, velY));
+	cannonMdl.SetProjectileStatus(curProjectileAsset, FIRED);
 	cannonMdl.UpdateAmmunitionCount(cannonMdl.GetNumProjectiles() - curProjectileAsset - 1);
-	curProjectileAsset++;
+	cannonMdl.SetCurProjectileAsset(curProjectileAsset + 1);
 }
 void GGCannonGameCtrl::ProjectileTick(sf::Time deltaT, int index) {
-	if (projectileDelays[index]-- > 0 || projectileStatuses[index] == LANDED) return;
-	cannonMdl.MakeProjectileVisible(index);
+	if (cannonMdl.GetProjectileDelay(index) > 0 || cannonMdl.GetProjectileStatus(index) == LANDED) return;
+	int val = cannonMdl.GetProjectileDelay(index);
+	if(val == -1) cannonMdl.MakeProjectileVisible(index);
 	float dt = (float) deltaT.asMilliseconds();
 	sf::Vector2f pos = cannonMdl.GetProjectile(index)->GetPos();
+	sf::Vector2f vel = cannonMdl.GetVelocity(index);
 	sf::Vector2f prevPos = pos;
-	pos.x = pos.x + (dt * velocities[index].x); // *horizontalTravelOffset);
-	pos.y = pos.y + (dt * velocities[index].y); // update position
+	pos.x = pos.x + (dt * vel.x); // *horizontalTravelOffset);
+	pos.y = pos.y + (dt * vel.y); // update position
 
-	velocities[index].y = velocities[index].y + (dt * gravity.y); // update velocity
+	vel.y = vel.y + (dt * gravity.y); // update velocity
+	cannonMdl.SetVelocity(index, vel);
 	cannonMdl.GetProjectile(index)->SetPos(pos);
 
 
@@ -145,17 +134,17 @@ void GGCannonGameCtrl::ProjectileTick(sf::Time deltaT, int index) {
 		float rightEdge = targetBoundingBox.left + targetBoundingBox.width;
 		sf::Vector2f p2S(leftEdge, 550);
 		sf::Vector2f p2E(rightEdge, 550);
-		if (IsIntersect(prevPos, pos, p2S, p2E)) {
-			targetHitStatuses[i] = true;
+		if (IsIntersect(prevPos, pos, p2S, p2E) && cannonMdl.GetTargetHitStatus(i) == false) {
+			cannonMdl.SetTargetHitStatus(i, true);
 			target->SetCurFrame(4);
 			target->SetPos(sf::Vector2f(target->GetPos().x - 10, target->GetPos().y));
 			pos = sf::Vector2f(-100, -100);
-			projectileStatuses[index] = LANDED;
+			cannonMdl.SetProjectileStatus(index, LANDED);
 			break;
 		}
 	}
 	if (pos.y > 570 && prevPos.y < pos.y) {
-		projectileStatuses[index] = LANDED;
+		cannonMdl.SetProjectileStatus(index, LANDED);
 	}
 	cannonMdl.GetProjectile(index)->SetPos(pos);
 }
@@ -185,23 +174,23 @@ void GGCannonGameCtrl::ChangeCannonAngle(sf::Vector2i mousePos) {
 	float projY = sinf(angle * (PI / 180.0f)) * hyp;
 	sf::Vector2f newPos(cannonPos.x + projX, cannonPos.y + projY);
 	for (int i = 0; i < cannonMdl.GetNumProjectiles(); i++) {
-		if (projectileStatuses[i] == LOADED) {
+		if (cannonMdl.GetProjectileStatus(i) == LOADED) {
 			cannonMdl.GetProjectile(i)->SetPos(newPos);
 		}
 	}
 	projectileAnchorPoint = newPos;
 }
 bool GGCannonGameCtrl::ProjectileFired(int index) {
-	return projectileStatuses[index] == FIRED;
+	return cannonMdl.GetProjectileStatus(index) == FIRED;
 }
 bool GGCannonGameCtrl::ProjectileFinised(int index) {
-	return projectileStatuses[index] == LANDED;
+	return cannonMdl.GetProjectileStatus(index) == LANDED;
 }
 bool GGCannonGameCtrl::TargetHit(int index) {
-	return targetHitStatuses[index] == true;
+	return cannonMdl.GetTargetHitStatus(index) == true;
 }
 void GGCannonGameCtrl::TargetTick(int index) {
-	if (targetWaitTicks[index]-- > 0) return;
+	if (cannonMdl.TargetWaitTick(index) > 0) return;
 	GGSheetAsset* target = cannonMdl.GetTarget(index);
 	target->NextAnimation();
 	sf::Vector2f pos = target->GetPos();
@@ -215,4 +204,13 @@ void GGCannonGameCtrl::TargetTick(int index) {
 	}
 	
 	target->SetPos(sf::Vector2f(pos.x + xOffset, pos.y));
+
+	if (target->GetPos().x <= cannonMdl.GetCannonAsset()->GetPos().x) {
+		for (int i = 0; i < cannonMdl.GetNumTargets(); i++) {
+			cannonMdl.SetTargetHitStatus(i, true);
+			// maybe sleep
+			cannonMdl.SetContinueGame(false);
+			cannonMdl.SetSuccess(false);
+		}
+	}
 }

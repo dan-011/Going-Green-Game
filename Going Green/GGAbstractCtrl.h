@@ -41,13 +41,6 @@ private:
 	GGTestGameOverModel gOMdl;
 };
 
-
-enum GGPROJECTILE_STATUS {
-	LOADED,
-	FIRED,
-	LANDED
-};
-
 class GGCannonGameCtrl : public GGAbstractCtrl {
 public:
 	GGCannonGameCtrl();
@@ -66,14 +59,8 @@ public:
 
 private:
 	GGCannonGameModel cannonMdl;
-	std::vector<sf::Vector2f> velocities;
-	std::vector<GGPROJECTILE_STATUS> projectileStatuses;
-	std::vector<bool> targetHitStatuses;
-	std::vector<int> targetWaitTicks;
-	std::vector<int> projectileDelays;
 	const sf::Vector2f gravity;
 	sf::Vector2f projectileAnchorPoint;
-	int curProjectileAsset;
 
 };
 #endif

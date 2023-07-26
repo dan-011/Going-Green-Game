@@ -32,11 +32,11 @@ int main()
     GGProjectileTickObserver projectileTickObs8(cannonView, cannonCtrl, 8);
     GGProjectileTickObserver projectileTickObs9(cannonView, cannonCtrl, 9);
 
-    GGTargetTickObserver targetTickObs0(cannonView, cannonCtrl, 0);
-    GGTargetTickObserver targetTickObs1(cannonView, cannonCtrl, 1);
-    GGTargetTickObserver targetTickObs2(cannonView, cannonCtrl, 2);
+    sf::Time stage1Lobbyists = sf::milliseconds(90); // 90
+    GGTargetTickObserver targetTickObs0(cannonView, cannonCtrl, 0, stage1Lobbyists);
+    GGTargetTickObserver targetTickObs1(cannonView, cannonCtrl, 1, stage1Lobbyists);
+    GGTargetTickObserver targetTickObs2(cannonView, cannonCtrl, 2, stage1Lobbyists);
     subjMgr.AddStage(testStage);
-
 
     subjMgr.PlayGame();
     return 0;
