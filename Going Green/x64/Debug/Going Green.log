@@ -1,9 +1,15 @@
 ﻿  GGAbstractCtrl.cpp
+C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractCtrl.h(79,33): warning C4305: 'initializing': truncation from 'double' to 'float'
   GGIndivObservers.cpp
+C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractCtrl.h(79,33): warning C4305: 'initializing': truncation from 'double' to 'float'
   GGMain.cpp
+C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractCtrl.h(79,33): warning C4305: 'initializing': truncation from 'double' to 'float'
 C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGMain.cpp(8,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   GGStage.cpp
+C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractCtrl.h(79,33): warning C4305: 'initializing': truncation from 'double' to 'float'
   GGSubjectManager.cpp
+C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractCtrl.h(79,33): warning C4305: 'initializing': truncation from 'double' to 'float'
   GGView.cpp
+C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractCtrl.h(79,33): warning C4305: 'initializing': truncation from 'double' to 'float'
   Generating Code...
   Going Green.vcxproj -> C:\Users\djcas\source\repos\Going-Green-Game\x64\Debug\Going Green.exe

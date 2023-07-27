@@ -35,7 +35,7 @@ int main()
     GGStageTransitionClickObserver stageTransitionClickObs(stageTransitionView, stageTransitionCtrl);
     GGStageTransitionTickObserver stageTransitionTickObs(stageTransitionView, stageTransitionCtrl, sf::milliseconds(10));
 
-    //subjMgr.AddStage(stageTransition);
+    subjMgr.AddStage(stageTransition);
     subjMgr.AddStage(newsStage);
     subjMgr.AddStage(testStage);
 

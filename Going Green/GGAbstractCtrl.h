@@ -76,7 +76,7 @@ public:
 	virtual void MoveEnvelope();
 private:
 	GGStageTransitionModel transMdl;
-	float initialLetterVelocity = -11;
+	float initialLetterVelocity = -11.4;
 	float initialEnvelopeVelocity = 9.5;
 };
 class GGTestGameOverCtrl : public GGAbstractCtrl {
