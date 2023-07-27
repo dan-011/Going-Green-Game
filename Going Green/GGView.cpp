@@ -8,6 +8,9 @@ GGView::~GGView() {}
 bool GGView::Show() {
 	sf::RenderWindow& window = GGWindow::Instance().GetWindow();
 	ctrl->ResetMdl();
+	model->StageOne();
+	//model->StageTwo();
+	//model->StageThree();
 	GGMusicAsset* backgroundMusic = model->GetBackgroundMusic();
 	if (backgroundMusic != NULL) {
 		backgroundMusic->Play();
@@ -24,7 +27,9 @@ bool GGView::Show() {
 		}
 		window.display();
 	}
-	backgroundMusic->Stop();
+	if (backgroundMusic != NULL) {
+		backgroundMusic->Stop();
+	}
 	return model->GetSuccess();
 }
 sf::Time GGView::GetElapsedTime() {

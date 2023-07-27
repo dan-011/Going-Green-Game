@@ -37,6 +37,7 @@ public:
 	virtual void Draw() override;
 	virtual sf::FloatRect GetBoundingBox();
 	virtual sf::Vector2u GetTextureSize() = 0;
+	virtual void ChangeBitmap(std::string fileName) = 0;
 
 protected:
 	sf::Sprite& GetSprite();
@@ -55,6 +56,7 @@ public:
 	virtual void SetCurFrame(int frame);
 	virtual int GetCurFrame();
 	virtual sf::Vector2u GetTextureSize() override;
+	virtual void ChangeBitmap(std::string fileName) override;
 
 private:
 	sf::Texture assetTexture;
@@ -76,6 +78,7 @@ public:
 	virtual void SetCurFrame(int frame);
 	virtual int GetCurFrame();
 	virtual sf::Vector2u GetTextureSize() override;
+	virtual void ChangeBitmap(std::string fileName) override {} // TODO
 private:
 	std::vector<sf::Texture*> assetTextures;
 	// sf::RectangleShape assetBody;
@@ -88,6 +91,7 @@ public:
 	GGStaticAsset(sf::Vector2f pos, const std::string fileName);
 	virtual ~GGStaticAsset();
 	virtual sf::Vector2u GetTextureSize() override;
+	virtual void ChangeBitmap(std::string fileName) override;
 
 private:
 	sf::Texture assetTexture;

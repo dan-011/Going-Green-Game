@@ -119,6 +119,10 @@ int GGSheetAsset::GetCurFrame() {
 sf::Vector2u GGSheetAsset::GetTextureSize() {
 	return sf::Vector2u(assetTexture.getSize().x / dimensions.x, assetTexture.getSize().y / dimensions.y);
 }
+void GGSheetAsset::ChangeBitmap(std::string fileName) {
+	assetTexture.loadFromFile(fileName);
+	SetTexture(assetTexture);
+}
 
 
 GGListAsset::GGListAsset(sf::Vector2f pos, std::vector<std::string> fileNames) : GGSpriteAsset(pos), curFrame(0) {
@@ -166,6 +170,10 @@ GGStaticAsset::GGStaticAsset(sf::Vector2f pos, const std::string fileName) : GGS
 GGStaticAsset::~GGStaticAsset() {}
 sf::Vector2u GGStaticAsset::GetTextureSize() {
 	return assetTexture.getSize();
+}
+void GGStaticAsset::ChangeBitmap(std::string fileName) {
+	assetTexture.loadFromFile(fileName);
+	SetTexture(assetTexture);
 }
 
 GGTextAsset::GGTextAsset(sf::Vector2f pos, unsigned int size, const std::string fontFileName, sf::Color clr) : GGAbstractAsset(pos) {

@@ -21,6 +21,11 @@ public:
 	virtual GGTimerAsset* GetTimer();
 	virtual GGMusicAsset* GetBackgroundMusic();
 	virtual void AssignBackgroundMusic(std::string fileName);
+	int GetStage();
+	void SetStage(int stg);
+	virtual void StageOne() = 0;
+	virtual void StageTwo() = 0;
+	virtual void StageThree() = 0;
 
 private:
 	std::vector<GGAbstractAsset*> assets;
@@ -28,22 +33,7 @@ private:
 	bool wasSuccess;
 	GGTimerAsset timer;
 	GGMusicAsset* backgroundMusic;
-};
-
-class GGPumpModel : public GGAbstractModel {
-public:
-	GGPumpModel();
-	virtual ~GGPumpModel();
-	GGSheetAsset* GetPump();
-	int GetNumPumps();
-	void SetNumPumps(int nPumps);
-	virtual void ResetData() override;
-
-private:
-	GGSheetAsset* pump; // change to object
-	int maxPumps;
-	int numPumps;
-	bool maxedOut;
+	int stage;
 };
 
 class GGTestGameOverModel : public GGAbstractModel {
@@ -52,6 +42,9 @@ public:
 	~GGTestGameOverModel();
 	GGListAsset* GetGameOverAsset();
 	virtual void ResetData() override;
+	virtual void StageOne() override {}
+	virtual void StageTwo() override {}
+	virtual void StageThree() override {}
 
 private:
 	GGListAsset* gameOverScreen; // change to object
@@ -91,6 +84,12 @@ public:
 	void SetCurProjectileAsset(int index);
 	int TargetWaitTick(int index);
 	GGSFXAsset* GetCannonSound();
+	sf::Time GetTagetSpeed();
+	virtual void StageOne() override;
+	virtual void StageTwo() override;
+	virtual void StageThree() override;
+	int GetHitCount();
+	void IncrementHitCount();
 
 private:
 	GGSheetAsset cannonAsset;
@@ -109,6 +108,10 @@ private:
 	bool first;
 	int curProjectileAsset;
 	GGSFXAsset cannonSound;
+	int totalProjectiles;
+	int totalTargets;
+	sf::Time targetSpeed;
+	int hitCount;
 };
 
 #endif

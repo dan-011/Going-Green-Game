@@ -54,41 +54,16 @@ bool GGAbstractCtrl::TimerTick() {
 	GetModel()->GetTimer()->TickMS();
 	return GetModel()->GetTimer()->TimerCompleted();
 }
-GGPumpCtrl::GGPumpCtrl() {
 
-}
-GGPumpCtrl::~GGPumpCtrl() {}
-GGAbstractModel* GGPumpCtrl::GetModel() {
-	return &pumpMdl;
-}
-void GGPumpCtrl::AnimatePump() {
-	pumpMdl.GetPump()->NextAnimation();
-	if (pumpMdl.GetPump()->AnimationCompleted()) {
-		pumpMdl.SetNumPumps(pumpMdl.GetNumPumps() - 1);
-	}
-}
-
-void GGPumpCtrl::PumpClicked() {
-	pumpMdl.SetNumPumps(pumpMdl.GetNumPumps() + 1);
-}
-
-bool GGPumpCtrl::IsAnimatingPump() {
-	return pumpMdl.GetNumPumps() > 0;
-}
-void GGPumpCtrl::EndGame() {
-	pumpMdl.SetSuccess(false);
-	pumpMdl.SetContinueGame(false);
-}
-
-GGTestGameOverCtrl::GGTestGameOverCtrl() {}
-GGTestGameOverCtrl::~GGTestGameOverCtrl() {}
-GGAbstractModel* GGTestGameOverCtrl::GetModel() {
+GGGameOverCtrl::GGGameOverCtrl() {}
+GGGameOverCtrl::~GGGameOverCtrl() {}
+GGAbstractModel* GGGameOverCtrl::GetModel() {
 	return &gOMdl;
 }
-void GGTestGameOverCtrl::AnimateScreen() {
+void GGGameOverCtrl::AnimateScreen() {
 	gOMdl.GetGameOverAsset()->NextAnimation();
 }
-void GGTestGameOverCtrl::RestartGame() {
+void GGGameOverCtrl::RestartGame() {
 	gOMdl.SetContinueGame(false);
 	gOMdl.SetSuccess(true);
 
@@ -141,6 +116,7 @@ void GGCannonGameCtrl::ProjectileTick(sf::Time deltaT, int index) {
 			target->SetPos(sf::Vector2f(target->GetPos().x - 10, target->GetPos().y));
 			pos = sf::Vector2f(-100, -100);
 			cannonMdl.SetProjectileStatus(index, LANDED);
+			cannonMdl.IncrementHitCount();
 			break;
 		}
 	}
@@ -148,6 +124,10 @@ void GGCannonGameCtrl::ProjectileTick(sf::Time deltaT, int index) {
 		cannonMdl.SetProjectileStatus(index, LANDED);
 	}
 	cannonMdl.GetProjectile(index)->SetPos(pos);
+	if (cannonMdl.GetHitCount() == cannonMdl.GetNumTargets()) {
+		cannonMdl.SetSuccess(true);
+		cannonMdl.SetContinueGame(false);
+	}
 }
 void GGCannonGameCtrl::AnimateCannonFire() {
 	cannonMdl.GetCannonAsset()->NextAnimation();
@@ -191,6 +171,7 @@ bool GGCannonGameCtrl::TargetHit(int index) {
 	return cannonMdl.GetTargetHitStatus(index) == true;
 }
 void GGCannonGameCtrl::TargetTick(int index) {
+	cout << index << endl;
 	if (cannonMdl.TargetWaitTick(index) > 0) return;
 	GGSheetAsset* target = cannonMdl.GetTarget(index);
 	target->NextAnimation();
@@ -214,4 +195,7 @@ void GGCannonGameCtrl::TargetTick(int index) {
 			cannonMdl.SetSuccess(false);
 		}
 	}
+}
+sf::Time GGCannonGameCtrl::GetTargetDeltaT() {
+	return cannonMdl.GetTagetSpeed();
 }

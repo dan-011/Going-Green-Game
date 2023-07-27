@@ -5,35 +5,7 @@ void GGLeftClickObserver::Update() {
 	// do something
 }
 
-GGPumpClickObserver::GGPumpClickObserver(GGView& vw, GGPumpCtrl& controller) : view(vw), ctrl(controller), clickSwitch(false) {
-	view.AddObserver(this);
-}
-GGPumpClickObserver::~GGPumpClickObserver() {}
-void GGPumpClickObserver::Update() {
-	if (view.GetEvent().type == sf::Event::MouseButtonPressed) {
-		clickSwitch = true;
-	}
-	if (view.GetEvent().type == sf::Event::MouseButtonReleased && clickSwitch) {
-		ctrl.PumpClicked();
-		clickSwitch = false;
-	}
-}
-
-GGPumpTickObserver::GGPumpTickObserver(GGView& vw, GGPumpCtrl& controller, sf::Time dt) : view(vw), ctrl(controller), deltaT(dt), currentTime(sf::microseconds(0)) {
-	view.AddObserver(this);
-}
-GGPumpTickObserver::~GGPumpTickObserver() {}
-void GGPumpTickObserver::Update() { // eventual implementation is to cycle the animation only when they have clicked (count the number of times they click and animate it x number of times)
-	if (ctrl.IsAnimatingPump() && currentTime == sf::milliseconds(0)) {
-		currentTime = view.GetElapsedTime();
-	}
-	if (view.GetElapsedTime() - currentTime >= deltaT && ctrl.IsAnimatingPump()) {
-		ctrl.AnimatePump();
-		currentTime = view.GetElapsedTime();
-	}
-}
-
-GGTestGameOverTick::GGTestGameOverTick(GGView& vw, GGTestGameOverCtrl& controller) : view(vw), ctrl(controller), deltaT(sf::milliseconds(60)), currentTime(sf::milliseconds(0)) {
+GGTestGameOverTick::GGTestGameOverTick(GGView& vw, GGGameOverCtrl& controller) : view(vw), ctrl(controller), deltaT(sf::milliseconds(60)), currentTime(sf::milliseconds(0)) {
 	view.AddObserver(this);
 }
 GGTestGameOverTick::~GGTestGameOverTick() {}
@@ -47,17 +19,7 @@ void GGTestGameOverTick::Update() {
 	}
 }
 
-GGEndGameObserver::GGEndGameObserver(GGView& vw, GGPumpCtrl& controller) : view(vw), ctrl(controller) {
-	view.AddObserver(this);
-}
-GGEndGameObserver::~GGEndGameObserver() {}
-void GGEndGameObserver::Update() {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-		ctrl.EndGame();
-	}
-}
-
-GGRestartGameObserver::GGRestartGameObserver(GGView& vw, GGTestGameOverCtrl& controller) : view(vw), ctrl(controller) {
+GGRestartGameObserver::GGRestartGameObserver(GGView& vw, GGGameOverCtrl& controller) : view(vw), ctrl(controller) {
 	view.AddObserver(this);
 }
 GGRestartGameObserver::~GGRestartGameObserver() {}
@@ -121,11 +83,12 @@ void GGCannonMoveObserver::Update() {
 	}
 }
 
-GGProjectileTickObserver::GGProjectileTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index) : view(vw), ctrl(controller), deltaT(sf::milliseconds(20)), currentTime(sf::milliseconds(0)), projectileIndex(index) {
+GGProjectileTickObserver::GGProjectileTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index, int stg) : view(vw), ctrl(controller), deltaT(sf::milliseconds(20)), currentTime(sf::milliseconds(0)), projectileIndex(index), stage(stg) {
 	view.AddObserver(this);
 }
 GGProjectileTickObserver::~GGProjectileTickObserver() {}
 void GGProjectileTickObserver::Update() {
+	if (stage > ctrl.GetModel()->GetStage()) return;
 	if (ctrl.IsCannonFiring() && currentTime == sf::milliseconds(0)) { // if jumping has been initiated and we have not recorded start time
 		currentTime = view.GetElapsedTime();
 	}
@@ -140,15 +103,16 @@ void GGProjectileTickObserver::Update() {
 } // limit ammunition and create that many observers
 // make an asset for a projectile
 
-GGTargetTickObserver::GGTargetTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index, sf::Time dt) : view(vw), ctrl(controller), targetIndex(index), currentTime(sf::milliseconds(0)), deltaT(dt) {
+GGTargetTickObserver::GGTargetTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index, int stg) : view(vw), ctrl(controller), targetIndex(index), currentTime(sf::milliseconds(0)), stage(stg) {
 	view.AddObserver(this);
 }
 GGTargetTickObserver::~GGTargetTickObserver() {}
 void GGTargetTickObserver::Update() {
+	if (stage > ctrl.GetModel()->GetStage()) return;
 	if (currentTime == sf::milliseconds(0)) {
 		currentTime = view.GetElapsedTime();
 	}
-	if (!ctrl.TargetHit(targetIndex) && view.GetElapsedTime() - currentTime >= deltaT) { // if we are currently jumping
+	if (!ctrl.TargetHit(targetIndex) && view.GetElapsedTime() - currentTime >= ctrl.GetTargetDeltaT()) { // if we are currently jumping
 		ctrl.TargetTick(targetIndex);
 		currentTime = view.GetElapsedTime();
 	}

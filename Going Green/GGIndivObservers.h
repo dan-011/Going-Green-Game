@@ -17,65 +17,29 @@ private:
 	GGAbstractCtrl& ctrl;
 };
 
-class GGPumpClickObserver : public GGAbstractObserver {
-public:
-	GGPumpClickObserver(GGView& vw, GGPumpCtrl& controller);
-	~GGPumpClickObserver();
-	virtual void Update() override;
-
-private:
-	GGView& view;
-	GGPumpCtrl& ctrl;
-	bool clickSwitch;
-};
-
-class GGPumpTickObserver : public GGAbstractObserver {
-public:
-	GGPumpTickObserver(GGView& vw, GGPumpCtrl& controller, sf::Time dt);
-	~GGPumpTickObserver();
-	virtual void Update() override;
-
-private:
-	GGView& view;
-	GGPumpCtrl& ctrl;
-	sf::Time deltaT;
-	sf::Time currentTime;
-};
-
 class GGTestGameOverTick : public GGAbstractObserver {
 public:
-	GGTestGameOverTick(GGView& vw, GGTestGameOverCtrl& controller);
+	GGTestGameOverTick(GGView& vw, GGGameOverCtrl& controller);
 	~GGTestGameOverTick();
 	virtual void Update() override;
 
 private:
 	GGView& view;
-	GGTestGameOverCtrl& ctrl;
+	GGGameOverCtrl& ctrl;
 	sf::Time deltaT;
 	sf::Time currentTime;
 
 };
 
-class GGEndGameObserver : public GGAbstractObserver {
-public:
-	GGEndGameObserver(GGView& vw, GGPumpCtrl& controller);
-	~GGEndGameObserver();
-	virtual void Update() override;
-
-private:
-	GGView& view;
-	GGPumpCtrl& ctrl;
-};
-
 class GGRestartGameObserver : public GGAbstractObserver {
 public:
-	GGRestartGameObserver(GGView& vw, GGTestGameOverCtrl& controller);
+	GGRestartGameObserver(GGView& vw, GGGameOverCtrl& controller);
 	~GGRestartGameObserver();
 	virtual void Update() override;
 
 private:
 	GGView& view;
-	GGTestGameOverCtrl& ctrl;
+	GGGameOverCtrl& ctrl;
 };
 
 class GGClockMSObserver : public GGAbstractObserver {
@@ -129,7 +93,7 @@ private:
 
 class GGProjectileTickObserver : public GGAbstractObserver {
 public:
-	GGProjectileTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index);
+	GGProjectileTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index, int stg);
 	~GGProjectileTickObserver();
 	virtual void Update() override;
 
@@ -139,19 +103,20 @@ private:
 	sf::Time deltaT;
 	sf::Time currentTime;
 	int projectileIndex;
+	int stage;
 };
 
 class GGTargetTickObserver : public GGAbstractObserver {
 public:
-	GGTargetTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index, sf::Time dt);
+	GGTargetTickObserver(GGView& vw, GGCannonGameCtrl& controller, int index, int stg);
 	~GGTargetTickObserver();
 	virtual void Update() override;
 
 private:
 	GGView& view;
 	GGCannonGameCtrl& ctrl;
-	sf::Time deltaT;
 	sf::Time currentTime;
 	int targetIndex;
+	int stage;
 };
 #endif

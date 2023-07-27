@@ -14,25 +14,10 @@ public:
 	virtual bool TimerTick();
 };
 
-class GGPumpCtrl : public GGAbstractCtrl {
+class GGGameOverCtrl : public GGAbstractCtrl {
 public:
-	GGPumpCtrl();
-	virtual ~GGPumpCtrl();
-	virtual GGAbstractModel* GetModel() override;
-	virtual void AnimatePump();
-	virtual void PumpClicked();
-	virtual bool IsAnimatingPump();
-	virtual void EndGame();
-
-private:
-	GGPumpModel pumpMdl;
-
-};
-
-class GGTestGameOverCtrl : public GGAbstractCtrl {
-public:
-	GGTestGameOverCtrl();
-	~GGTestGameOverCtrl();
+	GGGameOverCtrl();
+	~GGGameOverCtrl();
 	virtual GGAbstractModel* GetModel() override;
 	virtual void AnimateScreen();
 	virtual void RestartGame();
@@ -56,6 +41,7 @@ public:
 	bool ProjectileFinised(int index);
 	bool TargetHit(int index);
 	void TargetTick(int index);
+	sf::Time GetTargetDeltaT();
 
 private:
 	GGCannonGameModel cannonMdl;

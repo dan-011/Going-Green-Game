@@ -8,7 +8,7 @@ using namespace std;
 
 #define DELAY 15
 
-GGAbstractModel::GGAbstractModel() : continueGame(true), wasSuccess(true), timer(sf::Vector2f(0, 0), 50, "Assets/Fonts/Minimal5x7.ttf", 0, 0, sf::Color::White), backgroundMusic(NULL) {}
+GGAbstractModel::GGAbstractModel() : continueGame(true), wasSuccess(true), timer(sf::Vector2f(0, 0), 50, "Assets/Fonts/Minimal5x7.ttf", 0, 0, sf::Color::White), backgroundMusic(NULL), stage(1) {}
 GGAbstractModel::~GGAbstractModel() {
 	delete backgroundMusic;
 }
@@ -46,37 +46,17 @@ GGMusicAsset* GGAbstractModel::GetBackgroundMusic() {
 	return backgroundMusic;
 }
 void GGAbstractModel::AssignBackgroundMusic(std::string fileName) {
+	GGMusicAsset* oldBackgroundMusic = backgroundMusic;
 	backgroundMusic = new GGMusicAsset(fileName);
-}
-
-GGPumpModel::GGPumpModel() : pump(new GGSheetAsset(sf::Vector2f(500, 500), "Assets/Animations/oil_game/oil_drill_sprite_sheet.png", sf::Vector2u(4, 3))), maxPumps(10), numPumps(0), maxedOut(false) {
-	AddAsset(pump);
-}
-GGPumpModel::~GGPumpModel() {
-	delete pump;
-}
-GGSheetAsset* GGPumpModel::GetPump() {
-	return pump;
-}
-int GGPumpModel::GetNumPumps() {
-	return numPumps;
-}
-void GGPumpModel::SetNumPumps(int nPumps) {
-	if (maxedOut) return; // continue
-	if (nPumps > maxPumps) {
-		maxedOut = true;
-		numPumps = maxPumps;
-	}
-	else {
-		numPumps = nPumps;
+	if (oldBackgroundMusic != NULL) {
+		delete oldBackgroundMusic;
 	}
 }
-void GGPumpModel::ResetData() {
-	numPumps = 0;
-	SetContinueGame(true);
-	SetSuccess(true);
-	pump->SetCurFrame(0);
-	maxedOut = false;
+int GGAbstractModel::GetStage() {
+	return stage;
+}
+void GGAbstractModel::SetStage(int stg) {
+	stage = stg;
 }
 
 GGTestGameOverModel::GGTestGameOverModel() : gameOverScreen(new GGListAsset(sf::Vector2f(400, 400), vector<std::string> {
@@ -117,23 +97,15 @@ GGCannonGameModel::GGCannonGameModel() : cannonAsset(sf::Vector2f(0, 0), "Assets
 										 moneyAssetIcon(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_flying.png"),
 										 ammunitionCountAsset(sf::Vector2f(0, 0), 70, "Assets/Fonts/Minimal5x7.ttf", sf::Color::White),
 										 first(true),
-										 cannonSound("Assets/Music/CannonFire.wav") {
+										 cannonSound("Assets/Music/CannonFire.wav"),
+										 totalProjectiles(10),
+										 totalTargets(3),
+										 targetSpeed(sf::milliseconds(90)),
+										 hitCount(0) {
 	AddAsset(&backgroundAsset);
 	backgroundAsset.Scale(sf::Vector2f(4, 4));
 	backgroundAsset.SetOrigin(0, 0);
 
-	for (int i = 0; i < GetNumProjectiles(); i++) {
-		GGStaticAsset* moneyAsset = new GGStaticAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_flying.png");
-		moneyAssets.push_back(moneyAsset);
-		// AddAsset(moneyAsset);
-	}
-	for (int i = 0; i < GetNumTargets(); i++) {
-		GGSheetAsset* targetAsset = new GGSheetAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_catch.png", sf::Vector2u(5, 1), false, 4);
-		targetAsset->Scale(sf::Vector2f(5, 5));
-		targetAsset->SetPos(sf::Vector2f(1350, 600));
-		targetAssets.push_back(targetAsset);
-		AddAsset(targetAsset);
-	}
 	float scale = 5.0f;
 	cannonAsset.Scale(sf::Vector2f(scale, scale));
 	cannonAsset.SetOrigin(sf::Vector2f(cannonAsset.GetTextureSize().x / 3.75f, ceil(cannonAsset.GetTextureSize().y / 1.67f)));
@@ -144,11 +116,6 @@ GGCannonGameModel::GGCannonGameModel() : cannonAsset(sf::Vector2f(0, 0), "Assets
 	GetTimer()->SetPos(sf::Vector2f(1175, 5));
 	GetTimer()->StartTimer();
 
-	for (int i = 0; i < GetNumProjectiles(); i++) {
-		moneyAssets[i]->Scale(sf::Vector2f(4, 4));
-		moneyAssets[i]->SetPos(sf::Vector2f(cannonAsset.GetPos().x + GetCannonLength(), cannonAsset.GetPos().y));
-	}
-
 	moneyAssetIcon.SetPos(sf::Vector2f(50, 50));
 	moneyAssetIcon.Scale(sf::Vector2f(4, 4));
 	AddAsset(&moneyAssetIcon);
@@ -156,25 +123,7 @@ GGCannonGameModel::GGCannonGameModel() : cannonAsset(sf::Vector2f(0, 0), "Assets
 	ammunitionCountAsset.SetText("x 10");
 	AddAsset(&ammunitionCountAsset);
 
-	AddAsset(&cannonAsset);
-
-	for (int i = 0; i < GetNumProjectiles(); i++) {
-		velocities.push_back(sf::Vector2f(0, 0));
-		projectileStatuses.push_back(LOADED);
-		projectileDelays.push_back(DELAY);
-	}
-
-	srand((unsigned int)time(NULL));
-	for (int i = 0; i < GetNumTargets(); i++) {
-		targetHitStatuses.push_back(false);
-		// targetWaitTicks.push_back(rand() % 20);
-	}
-
-	targetWaitTicks.push_back(0);
-	targetWaitTicks.push_back(75);
-	targetWaitTicks.push_back(110);
-
-	AssignBackgroundMusic("Assets/Music/MainThemeLoop1.wav");
+	StageOne();
 }
 GGCannonGameModel::~GGCannonGameModel() {
 	for (auto asset : moneyAssets) {
@@ -190,6 +139,7 @@ GGSheetAsset* GGCannonGameModel::GetCannonAsset() {
 void GGCannonGameModel::ResetData() {
 	SetContinueGame(true);
 	SetSuccess(true);
+	hitCount = 0;
 	velocities.clear();
 	projectileStatuses.clear();
 	projectileDelays.clear();
@@ -251,10 +201,10 @@ float GGCannonGameModel::GetCannonLength() {
 	return 90.0f;
 }
 int GGCannonGameModel::GetNumProjectiles() {
-	return 10;
+	return totalProjectiles;
 }
 int GGCannonGameModel::GetNumTargets() {
-	return 3;
+	return totalTargets;
 }
 void GGCannonGameModel::MakeProjectileVisible(int index) {
 	InsertAsset(moneyAssets[index], GetNumAssets() - 1);
@@ -298,4 +248,158 @@ int GGCannonGameModel::TargetWaitTick(int index) {
 }
 GGSFXAsset* GGCannonGameModel::GetCannonSound() {
 	return &cannonSound;
+}
+sf::Time GGCannonGameModel::GetTagetSpeed() {
+	return targetSpeed;
+}
+void GGCannonGameModel::StageOne() {
+	totalProjectiles = 10;
+	totalTargets = 3;
+	targetSpeed = sf::milliseconds(90);
+	AssignBackgroundMusic("Assets/Music/MainThemeLoop1.wav");
+	UpdateAmmunitionCount(GetNumProjectiles());
+	for (int i = 0; i < GetNumProjectiles(); i++) {
+		GGStaticAsset* moneyAsset = new GGStaticAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_flying.png");
+		moneyAssets.push_back(moneyAsset);
+		// AddAsset(moneyAsset);
+	}
+	for (int i = 0; i < GetNumTargets(); i++) {
+		GGSheetAsset* targetAsset = new GGSheetAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_catch.png", sf::Vector2u(5, 1), false, 4);
+		targetAsset->Scale(sf::Vector2f(5, 5));
+		targetAsset->SetPos(sf::Vector2f(1350, 600));
+		targetAssets.push_back(targetAsset);
+		AddAsset(targetAsset);
+	}
+
+	for (int i = 0; i < GetNumProjectiles(); i++) {
+		moneyAssets[i]->Scale(sf::Vector2f(4, 4));
+		moneyAssets[i]->SetPos(sf::Vector2f(cannonAsset.GetPos().x + GetCannonLength(), cannonAsset.GetPos().y));
+	}
+
+	for (int i = 0; i < GetNumProjectiles(); i++) {
+		velocities.push_back(sf::Vector2f(0, 0));
+		projectileStatuses.push_back(LOADED);
+		projectileDelays.push_back(DELAY);
+	}
+
+	srand((unsigned int)time(NULL));
+	for (int i = 0; i < GetNumTargets(); i++) {
+		targetHitStatuses.push_back(false);
+		// targetWaitTicks.push_back(rand() % 20);
+	}
+
+	targetWaitTicks.push_back(0);
+	targetWaitTicks.push_back(75);
+	targetWaitTicks.push_back(110);
+	SetStage(1);
+	AddAsset(&cannonAsset);
+}
+void GGCannonGameModel::StageTwo() {
+	ResetData();
+	RemoveAsset(GetNumAssets() - 1);
+
+	int oldNumTargets = GetNumTargets();
+	int oldNumProjectiles = GetNumProjectiles();
+	totalProjectiles = 15;
+	totalTargets = 5;
+	targetSpeed = sf::milliseconds(50);
+	UpdateAmmunitionCount(GetNumProjectiles());
+	AssignBackgroundMusic("Assets/Music/MainThemeLoop2.wav");
+
+	for (auto target : targetAssets) {
+		target->ChangeBitmap("Assets/Animations/cannon_game/money_catch2.png");
+	}
+
+	for (int i = oldNumProjectiles; i < GetNumProjectiles(); i++) {
+		GGStaticAsset* moneyAsset = new GGStaticAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_flying.png");
+		moneyAssets.push_back(moneyAsset);
+		// AddAsset(moneyAsset);
+	}
+	for (int i = oldNumTargets; i < GetNumTargets(); i++) {
+		GGSheetAsset* targetAsset = new GGSheetAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_catch2.png", sf::Vector2u(5, 1), false, 4);
+		targetAsset->Scale(sf::Vector2f(5, 5));
+		targetAsset->SetPos(sf::Vector2f(1350, 600));
+		targetAssets.push_back(targetAsset);
+		AddAsset(targetAsset);
+	}
+
+	for (int i = oldNumProjectiles; i < GetNumProjectiles(); i++) {
+		moneyAssets[i]->Scale(sf::Vector2f(4, 4));
+		moneyAssets[i]->SetPos(sf::Vector2f(cannonAsset.GetPos().x + GetCannonLength(), cannonAsset.GetPos().y));
+		velocities.push_back(sf::Vector2f(0, 0));
+		projectileStatuses.push_back(LOADED);
+		projectileDelays.push_back(DELAY);
+	}
+
+	srand((unsigned int)time(NULL));
+	for (int i = oldNumTargets; i < GetNumTargets(); i++) {
+		targetHitStatuses.push_back(false);
+		// targetWaitTicks.push_back(rand() % 20);
+	}
+
+	int startDelay = 150;
+	for (int i = oldNumTargets; i < GetNumTargets(); i++) {
+		targetWaitTicks.push_back(startDelay);
+		startDelay += 30;
+	}
+	SetStage(2);
+	AddAsset(&cannonAsset);
+}
+void GGCannonGameModel::StageThree() {
+	ResetData();
+	RemoveAsset(GetNumAssets() - 1);
+
+	int oldNumTargets = GetNumTargets();
+	int oldNumProjectiles = GetNumProjectiles();
+	totalProjectiles = 20;
+	totalTargets = 10;
+	targetSpeed = sf::milliseconds(30);
+	UpdateAmmunitionCount(GetNumProjectiles());
+	AssignBackgroundMusic("Assets/Music/MainThemeLoop3.wav");
+
+	for (auto target : targetAssets) {
+		target->ChangeBitmap("Assets/Animations/cannon_game/money_catch3.png");
+	}
+
+	for (int i = oldNumProjectiles; i < GetNumProjectiles(); i++) {
+		GGStaticAsset* moneyAsset = new GGStaticAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_flying.png");
+		moneyAssets.push_back(moneyAsset);
+		// AddAsset(moneyAsset);
+	}
+	for (int i = oldNumTargets; i < GetNumTargets(); i++) {
+		GGSheetAsset* targetAsset = new GGSheetAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_catch3.png", sf::Vector2u(5, 1), false, 4);
+		targetAsset->Scale(sf::Vector2f(5, 5));
+		targetAsset->SetPos(sf::Vector2f(1350, 600));
+		targetAssets.push_back(targetAsset);
+		AddAsset(targetAsset);
+	}
+
+	for (int i = oldNumProjectiles; i < GetNumProjectiles(); i++) {
+		moneyAssets[i]->Scale(sf::Vector2f(4, 4));
+		moneyAssets[i]->SetPos(sf::Vector2f(cannonAsset.GetPos().x + GetCannonLength(), cannonAsset.GetPos().y));
+		velocities.push_back(sf::Vector2f(0, 0));
+		projectileStatuses.push_back(LOADED);
+		projectileDelays.push_back(DELAY);
+	}
+
+	srand((unsigned int)time(NULL));
+	for (int i = oldNumTargets; i < GetNumTargets(); i++) {
+		targetHitStatuses.push_back(false);
+		// targetWaitTicks.push_back(rand() % 20);
+	}
+
+	targetWaitTicks.clear();
+	int startDelay = 0;
+	for (int i = 0; i < GetNumTargets(); i++) {
+		targetWaitTicks.push_back(startDelay);
+		startDelay += 30;
+	}
+	SetStage(3);
+	AddAsset(&cannonAsset);
+}
+int GGCannonGameModel::GetHitCount() {
+	return hitCount;
+}
+void GGCannonGameModel::IncrementHitCount() {
+	hitCount++;
 }
