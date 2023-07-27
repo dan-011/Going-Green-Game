@@ -119,4 +119,28 @@ private:
 	int targetIndex;
 	int stage;
 };
+
+class GGStageFourSwitchObserver : public GGAbstractObserver {
+public:
+	GGStageFourSwitchObserver(GGView& vw, GGStageFourCtrl& controller);
+	~GGStageFourSwitchObserver();
+	virtual void Update() override;
+
+private:
+	GGView& view;
+	GGStageFourCtrl& ctrl;
+	sf::Time deltaT;
+	sf::Time currentTime;
+};
+
+class GGExitTitleScreenObserver : public GGAbstractObserver {
+public:
+	GGExitTitleScreenObserver(GGView& vw, GGTitleScreenCtrl& controller);
+	~GGExitTitleScreenObserver();
+	virtual void Update() override;
+
+private:
+	GGView& view;
+	GGTitleScreenCtrl& ctrl;
+};
 #endif

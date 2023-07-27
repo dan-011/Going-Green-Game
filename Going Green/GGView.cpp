@@ -9,8 +9,8 @@ bool GGView::Show() {
 	sf::RenderWindow& window = GGWindow::Instance().GetWindow();
 	ctrl->ResetMdl();
 	model->StageOne();
-	//model->StageTwo();
-	//model->StageThree();
+	// model->StageTwo();
+	// model->StageThree();
 	GGMusicAsset* backgroundMusic = model->GetBackgroundMusic();
 	if (backgroundMusic != NULL) {
 		backgroundMusic->Play();

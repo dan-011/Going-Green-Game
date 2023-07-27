@@ -15,6 +15,10 @@ GGAbstractModel::~GGAbstractModel() {
 std::vector<GGAbstractAsset*>& GGAbstractModel::GetAssets() {
 	return assets;
 }
+void GGAbstractModel::ResetData() {
+	SetContinueGame(true);
+	SetSuccess(true);
+}
 void GGAbstractModel::AddAsset(GGAbstractAsset* asset) {
 	assets.push_back(asset);
 }
@@ -59,39 +63,37 @@ void GGAbstractModel::SetStage(int stg) {
 	stage = stg;
 }
 
-GGTestGameOverModel::GGTestGameOverModel() : gameOverScreen(new GGListAsset(sf::Vector2f(400, 400), vector<std::string> {
-	"Assets/Animations/test_game_over/frame0.png",
-	"Assets/Animations/test_game_over/frame1.png",
-	"Assets/Animations/test_game_over/frame2.png",
-	"Assets/Animations/test_game_over/frame3.png",
-	"Assets/Animations/test_game_over/frame4.png",
-	"Assets/Animations/test_game_over/frame5.png",
-	"Assets/Animations/test_game_over/frame6.png",
-	"Assets/Animations/test_game_over/frame7.png",
-	"Assets/Animations/test_game_over/frame8.png",
-	"Assets/Animations/test_game_over/frame9.png",
-	"Assets/Animations/test_game_over/frame10.png",
-	"Assets/Animations/test_game_over/frame11.png",
-	"Assets/Animations/test_game_over/frame12.png",
-	"Assets/Animations/test_game_over/frame13.png",
-	"Assets/Animations/test_game_over/frame14.png"
-})){
+GGGameOverModel::GGGameOverModel() : gameOverScreen(new GGStaticAsset(sf::Vector2f(0, 0), "Assets/Backgrounds/lose_1.png")) {
+	gameOverScreen->Scale(sf::Vector2f(4, 4));
+	gameOverScreen->SetOrigin(sf::Vector2f(0, 0));
+	gameOverScreen->SetPos(sf::Vector2f(0, 0));
 	AddAsset(gameOverScreen);
 }
-GGTestGameOverModel::~GGTestGameOverModel() {
+GGGameOverModel::~GGGameOverModel() {
 	delete gameOverScreen;
 }
-GGListAsset* GGTestGameOverModel::GetGameOverAsset() {
+GGStaticAsset* GGGameOverModel::GetGameOverAsset() {
 	return gameOverScreen;
 }
-void GGTestGameOverModel::ResetData() {
-	SetContinueGame(true);
-	SetSuccess(true);
-	gameOverScreen->SetCurFrame(0);
+void GGGameOverModel::StageOne() {
+	ResetData();
+	gameOverScreen->ChangeBitmap("Assets/Backgrounds/lose_1.png");
+	SetStage(1);
+}
+void GGGameOverModel::StageTwo() {
+	ResetData();
+	gameOverScreen->ChangeBitmap("Assets/Backgrounds/lose_2.png");
+	SetStage(2);
+}
+void GGGameOverModel::StageThree() {
+	ResetData();
+	gameOverScreen->ChangeBitmap("Assets/Backgrounds/lose_3.png");
+	SetStage(3);
 }
 
 GGCannonGameModel::GGCannonGameModel() : cannonAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/cannon.png", 
-										 sf::Vector2u(4, 3), false, 10), backgroundAsset(sf::Vector2f(0,0), "Assets/Animations/cannon_game/court_level_1.png"),
+										 sf::Vector2u(4, 3), false, 10),
+										 backgroundAsset(sf::Vector2f(0,0), "Assets/Backgrounds/court_1.png"),
 										 cannonFiring(false),
 										 cannonAngle(0),
 										 moneyAssetIcon(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_flying.png"),
@@ -137,8 +139,7 @@ GGSheetAsset* GGCannonGameModel::GetCannonAsset() {
 	return &cannonAsset;
 }
 void GGCannonGameModel::ResetData() {
-	SetContinueGame(true);
-	SetSuccess(true);
+	GGAbstractModel::ResetData();
 	hitCount = 0;
 	velocities.clear();
 	projectileStatuses.clear();
@@ -258,6 +259,7 @@ void GGCannonGameModel::StageOne() {
 	targetSpeed = sf::milliseconds(90);
 	AssignBackgroundMusic("Assets/Music/MainThemeLoop1.wav");
 	UpdateAmmunitionCount(GetNumProjectiles());
+	backgroundAsset.ChangeBitmap("Assets/Backgrounds/court_1.png");
 	for (int i = 0; i < GetNumProjectiles(); i++) {
 		GGStaticAsset* moneyAsset = new GGStaticAsset(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_flying.png");
 		moneyAssets.push_back(moneyAsset);
@@ -305,6 +307,7 @@ void GGCannonGameModel::StageTwo() {
 	targetSpeed = sf::milliseconds(50);
 	UpdateAmmunitionCount(GetNumProjectiles());
 	AssignBackgroundMusic("Assets/Music/MainThemeLoop2.wav");
+	backgroundAsset.ChangeBitmap("Assets/Backgrounds/court_2.png");
 
 	for (auto target : targetAssets) {
 		target->ChangeBitmap("Assets/Animations/cannon_game/money_catch2.png");
@@ -356,6 +359,7 @@ void GGCannonGameModel::StageThree() {
 	targetSpeed = sf::milliseconds(30);
 	UpdateAmmunitionCount(GetNumProjectiles());
 	AssignBackgroundMusic("Assets/Music/MainThemeLoop3.wav");
+	backgroundAsset.ChangeBitmap("Assets/Backgrounds/court_3.png");
 
 	for (auto target : targetAssets) {
 		target->ChangeBitmap("Assets/Animations/cannon_game/money_catch3.png");
@@ -403,3 +407,42 @@ int GGCannonGameModel::GetHitCount() {
 void GGCannonGameModel::IncrementHitCount() {
 	hitCount++;
 }
+GGStageFourModel::GGStageFourModel() : screenIndex(0), background(sf::Vector2f(0, 0), "Assets/Backgrounds/forest_4.png") {
+	background.Scale(sf::Vector2f(4, 4));
+	background.SetOrigin(sf::Vector2f(0, 0));
+	background.SetPos(sf::Vector2f(0, 0));
+	AssignBackgroundMusic("Assets/Music/wind.ogg");
+	screenFileNames.push_back("Assets/Backgrounds/forest_4.png");
+	screenFileNames.push_back("Assets/Backgrounds/court_4.png");
+	screenFileNames.push_back("Assets/Backgrounds/desert_4.png");
+	screenFileNames.push_back("Assets/Backgrounds/lose_4.png");
+
+	AddAsset(&background);
+}
+GGStageFourModel::~GGStageFourModel() {}
+int GGStageFourModel::GetScreenNumber() {
+	return screenIndex;
+}
+void GGStageFourModel::NextScreen() {
+	background.ChangeBitmap(screenFileNames[++screenIndex]);
+}
+void GGStageFourModel::ResetData() {
+	GGAbstractModel::ResetData();
+	screenIndex = 0;
+	background.ChangeBitmap(screenFileNames[screenIndex]);
+}
+void GGStageFourModel::StageOne() {}
+void GGStageFourModel::StageTwo() {}
+void GGStageFourModel::StageThree() {}
+
+GGTitleScreenModel::GGTitleScreenModel() : background(sf::Vector2f(0, 0), "Assets/Backgrounds/title.png") {
+	background.SetOrigin(sf::Vector2f(0, 0));
+	background.SetPos(sf::Vector2f(0, 0));
+	background.Scale(sf::Vector2f(4, 4));
+	AddAsset(&background);
+	AssignBackgroundMusic("Assets/Music/TitleScreenLoop.wav");
+}
+GGTitleScreenModel::~GGTitleScreenModel() {}
+void GGTitleScreenModel::StageOne() {}
+void GGTitleScreenModel::StageTwo() {}
+void GGTitleScreenModel::StageThree() {}

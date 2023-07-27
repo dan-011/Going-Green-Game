@@ -17,7 +17,7 @@ public:
 	void SetContinueGame(bool isContinuing);
 	bool GetSuccess();
 	void SetSuccess(bool success);
-	virtual void ResetData() = 0;
+	virtual void ResetData();
 	virtual GGTimerAsset* GetTimer();
 	virtual GGMusicAsset* GetBackgroundMusic();
 	virtual void AssignBackgroundMusic(std::string fileName);
@@ -36,18 +36,17 @@ private:
 	int stage;
 };
 
-class GGTestGameOverModel : public GGAbstractModel {
+class GGGameOverModel : public GGAbstractModel {
 public:
-	GGTestGameOverModel();
-	~GGTestGameOverModel();
-	GGListAsset* GetGameOverAsset();
-	virtual void ResetData() override;
-	virtual void StageOne() override {}
-	virtual void StageTwo() override {}
-	virtual void StageThree() override {}
+	GGGameOverModel();
+	~GGGameOverModel();
+	GGStaticAsset* GetGameOverAsset();
+	virtual void StageOne() override;
+	virtual void StageTwo() override;
+	virtual void StageThree() override;
 
 private:
-	GGListAsset* gameOverScreen; // change to object
+	GGStaticAsset* gameOverScreen; // change to object
 };
 
 enum GGPROJECTILE_STATUS {
@@ -114,4 +113,32 @@ private:
 	int hitCount;
 };
 
+class GGStageFourModel : public GGAbstractModel {
+public:
+	GGStageFourModel();
+	~GGStageFourModel();
+	int GetScreenNumber();
+	void NextScreen();
+	virtual void ResetData() override;
+	virtual void StageOne() override;
+	virtual void StageTwo() override;
+	virtual void StageThree() override;
+
+private:
+	std::vector<std::string> screenFileNames;
+	int screenIndex;
+	GGStaticAsset background;
+};
+
+class GGTitleScreenModel : public GGAbstractModel {
+public:
+	GGTitleScreenModel();
+	~GGTitleScreenModel();
+	virtual void StageOne() override;
+	virtual void StageTwo() override;
+	virtual void StageThree() override;
+
+private:
+	GGStaticAsset background;
+};
 #endif

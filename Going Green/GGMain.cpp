@@ -7,6 +7,13 @@ int main()
 {
     GGSubjectManager subjMgr;
 
+    GGTitleScreenCtrl titleScreenCtrl;
+    GGView titleScreenView(&titleScreenCtrl);
+    GGStage titleStage(&titleScreenView);
+
+    GGExitTitleScreenObserver titleScreenObs(titleScreenView, titleScreenCtrl);
+    subjMgr.AddStage(titleStage);
+
     /* Test Pump Game */
     GGCannonGameCtrl cannonCtrl;
     GGGameOverCtrl testGameOverCtrl;
@@ -53,6 +60,12 @@ int main()
     GGTargetTickObserver targetTickObs8(cannonView, cannonCtrl, 8, 3);
     GGTargetTickObserver targetTickObs9(cannonView, cannonCtrl, 9, 3);
     subjMgr.AddStage(testStage);
+
+    GGStageFourCtrl stageFourCtrl;
+    GGView stageFourView(&stageFourCtrl);
+    GGStage stageFour(&stageFourView);
+    GGStageFourSwitchObserver stageFourSwitchObs(stageFourView, stageFourCtrl);
+    subjMgr.AddStage(stageFour);
 
     subjMgr.PlayGame();
     return 0;

@@ -117,3 +117,27 @@ void GGTargetTickObserver::Update() {
 		currentTime = view.GetElapsedTime();
 	}
 }
+
+GGStageFourSwitchObserver::GGStageFourSwitchObserver(GGView& vw, GGStageFourCtrl& controller) : view(vw), ctrl(controller), deltaT(sf::seconds(6)), currentTime(sf::seconds(0)) {
+	view.AddObserver(this);
+}
+GGStageFourSwitchObserver::~GGStageFourSwitchObserver() {}
+void GGStageFourSwitchObserver::Update() {
+	if (currentTime == sf::seconds(0)) {
+		currentTime = view.GetElapsedTime();
+	}
+	if (ctrl.ContinueOntoNext() && view.GetElapsedTime() - currentTime >= deltaT) {
+		ctrl.NextGame();
+		currentTime = view.GetElapsedTime();
+	}
+}
+
+GGExitTitleScreenObserver::GGExitTitleScreenObserver(GGView& vw, GGTitleScreenCtrl& controller) : view(vw), ctrl(controller) {
+	view.AddObserver(this);
+}
+GGExitTitleScreenObserver::~GGExitTitleScreenObserver() {}
+void GGExitTitleScreenObserver::Update() {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+		ctrl.ExitTitleScreen();
+	}
+}

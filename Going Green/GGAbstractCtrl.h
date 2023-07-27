@@ -23,7 +23,7 @@ public:
 	virtual void RestartGame();
 
 private:
-	GGTestGameOverModel gOMdl;
+	GGGameOverModel gOMdl;
 };
 
 class GGCannonGameCtrl : public GGAbstractCtrl {
@@ -48,5 +48,28 @@ private:
 	const sf::Vector2f gravity;
 	sf::Vector2f projectileAnchorPoint;
 
+};
+
+class GGStageFourCtrl : public GGAbstractCtrl {
+public:
+	GGStageFourCtrl();
+	~GGStageFourCtrl();
+	virtual GGAbstractModel* GetModel() override;
+	void NextGame();
+	bool ContinueOntoNext();
+
+private:
+	GGStageFourModel stageFourModel;
+};
+
+class GGTitleScreenCtrl : public GGAbstractCtrl {
+public:
+	GGTitleScreenCtrl();
+	~GGTitleScreenCtrl();
+	virtual GGAbstractModel* GetModel() override;
+	void ExitTitleScreen();
+
+private:
+	GGTitleScreenModel titleScreenModel;
 };
 #endif

@@ -171,7 +171,6 @@ bool GGCannonGameCtrl::TargetHit(int index) {
 	return cannonMdl.GetTargetHitStatus(index) == true;
 }
 void GGCannonGameCtrl::TargetTick(int index) {
-	cout << index << endl;
 	if (cannonMdl.TargetWaitTick(index) > 0) return;
 	GGSheetAsset* target = cannonMdl.GetTarget(index);
 	target->NextAnimation();
@@ -198,4 +197,26 @@ void GGCannonGameCtrl::TargetTick(int index) {
 }
 sf::Time GGCannonGameCtrl::GetTargetDeltaT() {
 	return cannonMdl.GetTagetSpeed();
+}
+
+GGStageFourCtrl::GGStageFourCtrl() {}
+GGStageFourCtrl::~GGStageFourCtrl() {}
+GGAbstractModel* GGStageFourCtrl::GetModel() {
+	return &stageFourModel;
+}
+void GGStageFourCtrl::NextGame() {
+	stageFourModel.NextScreen();
+}
+bool GGStageFourCtrl::ContinueOntoNext() {
+	return stageFourModel.GetScreenNumber() < 3;
+}
+
+GGTitleScreenCtrl::GGTitleScreenCtrl() {}
+GGTitleScreenCtrl::~GGTitleScreenCtrl() {}
+GGAbstractModel* GGTitleScreenCtrl::GetModel() {
+	return &titleScreenModel;
+}
+void GGTitleScreenCtrl::ExitTitleScreen() {
+	titleScreenModel.SetSuccess(true);
+	titleScreenModel.SetContinueGame(false);
 }

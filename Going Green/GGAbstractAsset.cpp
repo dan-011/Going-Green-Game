@@ -277,6 +277,7 @@ GGMusicAsset::~GGMusicAsset() {
 	music.stop();
 }
 void GGMusicAsset::Play() {
+	music.setLoop(true);
 	music.play();
 	assert(music.getStatus() == sf::Music::Playing);
 }
