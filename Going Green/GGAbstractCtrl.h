@@ -24,6 +24,8 @@ public:
 	virtual void EndGame();
 	virtual void WinGame();
 	virtual int GetQueuedPumps();
+	virtual bool TimerTick();
+	virtual bool TimerCompleted();
 
 private:
 	GGPumpModel pumpMdl;
@@ -42,12 +44,22 @@ public:
 	virtual void PressButton(int button);
 	virtual void ProcessClick(sf::Vector2f mousePos);
 	virtual void GenerateQuestion();
+	virtual bool TimerTick();
+	virtual bool TimerCompleted();
+	virtual void ChangeMouth();
+	virtual void ResetMouth();
+	virtual bool IsAnimatingMouth();
+	virtual void SetAnimatingMouth(bool val);
+	virtual bool GetNewClick();
+	virtual void SetNewClick(bool click);
 private:
 	GGNewsModel newsMdl;
 	int numAnswers;
 	int goodAnswer;
 	std::vector<std::string> questions = { "Experts say that ___ can be blamed for recent climate change", "We need to take action against climate change or things will be ___", "Recent effects of oil usage deemed ___ for the environment", "Natural habitats are being ___ by industry action"};
 	std::vector<std::string> answers = { "Industry", "People", "Awful", "Fine", "Bad", "Good", "Damaged", "Helped" };
+	bool isAnimatingMouth = false;
+	bool newClick = false;
 };
 
 class GGStageTransitionCtrl : public GGAbstractCtrl
@@ -64,8 +76,8 @@ public:
 	virtual void MoveEnvelope();
 private:
 	GGStageTransitionModel transMdl;
-	float initialLetterVelocity = -35.0;
-	float initialEnvelopeVelocity = 30.0;
+	float initialLetterVelocity = -11;
+	float initialEnvelopeVelocity = 9.5;
 };
 class GGTestGameOverCtrl : public GGAbstractCtrl {
 public:

@@ -32,6 +32,7 @@ void GGPumpCtrl::PumpClicked() {
 	if (pumpMdl.GetTransition()->GetDrawing())
 	{
 		pumpMdl.GetTransition()->SetDrawing(false);
+		pumpMdl.GetTimer()->StartTimer();
 		return;
 	}
 	pumpMdl.SetNumPumps(pumpMdl.GetNumPumps() + 1);
@@ -69,6 +70,18 @@ int GGPumpCtrl::GetQueuedPumps()
 	return pumpMdl.GetNumPumps();
 }
 
+bool GGPumpCtrl::TimerTick()
+{
+	if (!pumpMdl.GetTimer()->GetTimerStarted()) return false;
+	pumpMdl.GetTimer()->TickMS();
+	return pumpMdl.GetTimer()->TimerCompleted();
+}
+
+bool GGPumpCtrl::TimerCompleted()
+{
+	return pumpMdl.GetTimer()->TimerCompleted();
+}
+
 GGNewsCtrl::GGNewsCtrl() : newsMdl(10)
 {
 	GenerateQuestion();
@@ -83,13 +96,13 @@ GGAbstractModel* GGNewsCtrl::GetModel()
 
 void GGNewsCtrl::EndGame()
 {
-	newsMdl.SetContinueGame(true);
+	newsMdl.SetContinueGame(false);
 	newsMdl.SetSuccess(false);
 }
 
 void GGNewsCtrl::WinGame()
 {
-	newsMdl.SetContinueGame(true);
+	newsMdl.SetContinueGame(false);
 	newsMdl.SetSuccess(true);
 }
 
@@ -122,6 +135,8 @@ void GGNewsCtrl::PressButton(int button)
 			newsMdl.SetNumAnswers(newsMdl.GetNumAnswers() - 1);
 			GenerateQuestion();
 		}
+		SetAnimatingMouth(true);
+		SetNewClick(true);
 	}
 	if (newsMdl.GoalMet())
 	{
@@ -135,6 +150,7 @@ void GGNewsCtrl::ProcessClick(sf::Vector2f mousePos)
 	if (newsMdl.GetTransition()->GetDrawing())
 	{
 		newsMdl.GetTransition()->SetDrawing(false);
+		newsMdl.GetTimer()->StartTimer();
 		return;
 	}
 	if (newsMdl.GetButton(0)->GetGlobalBounds().contains(mousePos))
@@ -164,6 +180,48 @@ void GGNewsCtrl::GenerateQuestion()
 	}
 }
 
+bool GGNewsCtrl::TimerTick() {
+	if (!newsMdl.GetTimer()->GetTimerStarted()) return false;
+	newsMdl.GetTimer()->TickMS();
+	return newsMdl.GetTimer()->TimerCompleted();
+}
+
+bool GGNewsCtrl::TimerCompleted()
+{
+	return newsMdl.GetTimer()->TimerCompleted();
+}
+void GGNewsCtrl::ChangeMouth()
+{
+	newsMdl.ChangeMouth();
+}
+void GGNewsCtrl::ResetMouth()
+{
+	newsMdl.ResetMouth();
+}
+bool GGNewsCtrl::IsAnimatingMouth()
+{
+	return isAnimatingMouth;
+}
+void GGNewsCtrl::SetAnimatingMouth(bool val)
+{
+	isAnimatingMouth = val;
+	if (val)
+	{
+		ChangeMouth();
+	}
+	else
+	{
+		ResetMouth();
+	}
+}
+bool GGNewsCtrl::GetNewClick()
+{
+	return newClick;
+}
+void GGNewsCtrl::SetNewClick(bool click)
+{
+	newClick = click;
+}
 GGStageTransitionCtrl::GGStageTransitionCtrl(std::string tablePath, std::string envelopePath, std::string letterPath) : transMdl(tablePath, envelopePath, letterPath)
 {
 	transMdl.SetEnvelopeVelocity(initialEnvelopeVelocity);

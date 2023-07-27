@@ -40,24 +40,44 @@ void GGPumpTickObserver::Update() {
 	ctrl.CheckGameWon();
 }
 
-GGNewsButtonTickObserver::GGNewsButtonTickObserver(GGView& vw, GGNewsCtrl& controller, sf::Time dt) : view(vw), ctrl(controller), deltaT(dt)
+GGNewsTickObserver::GGNewsTickObserver(GGView& vw, GGNewsCtrl& controller, sf::Time dt) : view(vw), ctrl(controller), deltaT(dt)
 {
 	view.AddObserver(this);
+	mouthDeltaTime = sf::milliseconds(75);
+	mouthTotalDeltaTime = sf::seconds(2);
 }
 
-GGNewsButtonTickObserver::~GGNewsButtonTickObserver(){}
+GGNewsTickObserver::~GGNewsTickObserver(){}
 
-void GGNewsButtonTickObserver::Update()
+void GGNewsTickObserver::Update()
 {
 	if (currentTime == sf::milliseconds(0) || !ctrl.IsAnimatingButton())
 	{
 		currentTime = view.GetElapsedTime();
 	}
-
 	if (view.GetElapsedTime() - currentTime >= deltaT && ctrl.IsAnimatingButton())
 	{
 		ctrl.ClearButtonAnim();
 		currentTime = view.GetElapsedTime();
+	}
+	if (currentTimeMouth == sf::milliseconds(0) || !ctrl.IsAnimatingMouth())
+	{
+		currentTimeMouth = view.GetElapsedTime();
+	}
+	if (view.GetElapsedTime() - currentTimeMouth >= mouthDeltaTime && ctrl.IsAnimatingMouth())
+	{
+		ctrl.ChangeMouth();
+		currentTimeMouth = view.GetElapsedTime();
+	}
+	if (currentTimeMouthTotal == sf::milliseconds(0) || !ctrl.IsAnimatingMouth() || ctrl.GetNewClick())
+	{
+		currentTimeMouthTotal = view.GetElapsedTime();
+		ctrl.SetNewClick(false);
+	}
+	if (view.GetElapsedTime() - currentTimeMouthTotal >= mouthTotalDeltaTime && ctrl.IsAnimatingMouth())
+	{
+		ctrl.ResetMouth();
+		ctrl.SetAnimatingMouth(false);
 	}
 }
 
@@ -84,6 +104,57 @@ void GGNewsButtonClickObserver::Update()
 		clickSwitch = false;
 	}
 }
+
+GGNewsTimerObserver::GGNewsTimerObserver(GGView& vw, GGNewsCtrl& controller) : view(vw), ctrl(controller)
+{
+	view.AddObserver(this);
+}
+
+GGNewsTimerObserver::~GGNewsTimerObserver()
+{
+
+}
+
+void GGNewsTimerObserver::Update()
+{
+	if (currentTime == sf::milliseconds(0))
+	{
+		currentTime = view.GetElapsedTime();
+	}
+	if (view.GetElapsedTime() - currentTime >= sf::milliseconds(1))
+	{
+		ctrl.TimerTick();
+	}
+	if (ctrl.TimerCompleted())
+	{
+		ctrl.EndGame();
+	}
+}
+
+GGPumpTimerObserver::GGPumpTimerObserver(GGView& vw, GGPumpCtrl& controller) : view(vw), ctrl(controller)
+{
+	view.AddObserver(this);
+}
+GGPumpTimerObserver::~GGPumpTimerObserver()
+{
+}
+
+void GGPumpTimerObserver::Update()
+{
+	if (currentTime == sf::milliseconds(0))
+	{
+		currentTime = view.GetElapsedTime();
+	}
+	if (view.GetElapsedTime() - currentTime >= sf::milliseconds(1))
+	{
+		ctrl.TimerTick();
+	}
+	if (ctrl.TimerCompleted())
+	{
+		ctrl.EndGame();
+	}
+}
+
 
 GGStageTransitionTickObserver::GGStageTransitionTickObserver(GGView& vw, GGStageTransitionCtrl& controller, sf::Time dt) : view(vw), ctrl(controller), deltaT(dt)
 {

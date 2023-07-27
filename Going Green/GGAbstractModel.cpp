@@ -27,10 +27,11 @@ void GGAbstractModel::SetSuccess(bool success) {
 }
 
 GGPumpModel::GGPumpModel() : pump(new GGSheetAsset(sf::Vector2f(650, 292), "Assets/Animations/oil_game/oil_drill_sprite_sheet.png", sf::Vector2u(4, 3))), maxPumps(10), numPumps(0), maxedOut(false), goalPumps(25), totalPumps(0), oil(new GGSheetAsset(sf::Vector2f(590, 360), "Assets/Animations/oil_game/oil_sprite_sheet.png", sf::Vector2u(3, 3), true, false)),
-background(new GGStaticAsset(sf::Vector2f(640, 360), "Assets/Animations/oil_game/oil_minigame_background.png")), transition(new GGMinigameTransition("Drill!", "Click as fast as you can!")) {
+background(new GGStaticAsset(sf::Vector2f(640, 360), "Assets/Animations/oil_game/oil_minigame_background.png")), transition(new GGMinigameTransition("Drill!", "Click as fast as you can!")), timer(new GGTimerAsset(sf::Vector2f(540, -50), 100, "Assets/Fonts/Minimal5x7.ttf", 120, 0, sf::Color(0xE6EBD6FF))) {
 	AddAsset(background);
 	AddAsset(oil);
 	AddAsset(pump);
+	AddAsset(timer);
 	AddAsset(transition);
 	background->Scale(sf::Vector2f(4, 4));
 	pump->Scale(sf::Vector2f(4, 4));
@@ -41,6 +42,7 @@ GGPumpModel::~GGPumpModel() {
 	delete oil;
 	delete background;
 	delete transition;
+	delete timer;
 }
 GGSheetAsset* GGPumpModel::GetPump() {
 	return pump;
@@ -72,6 +74,10 @@ void GGPumpModel::IncrementPumps()
 {
 	totalPumps++;
 }
+GGTimerAsset* GGPumpModel::GetTimer()
+{
+	return timer;
+}
 bool GGPumpModel::PumpMaxReached()
 {
 	return (totalPumps >= goalPumps);
@@ -86,6 +92,7 @@ void GGPumpModel::ResetData() {
 	transition->SetDrawing(true);
 	oil->SetFinishedAnimating(false);
 	oil->SetStart(false);
+	timer->RestartTimer();
 }
 
 GGNewsModel::GGNewsModel(int maxReports) : goalReports(maxReports), numReports(0)
@@ -97,6 +104,13 @@ GGNewsModel::GGNewsModel(int maxReports) : goalReports(maxReports), numReports(0
 	transition = new GGMinigameTransition("Lobby!", "Fill in the sentence with the word\nthat supports corporate interest");
 	questionBubble = new GGStaticAsset(sf::Vector2f(640, 135), "Assets/Animations/tv_game/speech_bubble.png");
 	questionText = new GGTextAsset(sf::Vector2f(100, 100), 50, "Assets/Fonts/Minimal5x7.ttf", sf::Color(0x24222EFF));
+	timer = new GGTimerAsset(sf::Vector2f(540, -50), 100, "Assets/Fonts/Minimal5x7.ttf", 120, 0, sf::Color(0xE6EBD6FF));
+	reporter = new GGStaticAsset(sf::Vector2f(-100, 0), "Assets/Animations/tv_game/reporter1.png");
+	mouth = new GGSheetAsset(sf::Vector2f(242, 378), "Assets/Animations/tv_game/mouth.png", sf::Vector2u(2, 2));
+	reporter->SetOrigin(0, 0);
+	mouth->Scale(sf::Vector2f(4, 4));
+	mouth->SetCurFrame(0);
+	reporter->Scale(sf::Vector2f(4,4));
 	questionText->SetText("q");
 	background->SetOrigin(0, 0);
 	frame->SetOrigin(0, 0);
@@ -104,11 +118,14 @@ GGNewsModel::GGNewsModel(int maxReports) : goalReports(maxReports), numReports(0
 	frame->Scale(sf::Vector2f(4, 4));
 	questionBubble->Scale(sf::Vector2f(4, 4));
 	AddAsset(background);
+	AddAsset(reporter);
+	AddAsset(mouth);
 	AddAsset(frame);
 	AddAsset(button1);
 	AddAsset(button2);
 	AddAsset(questionBubble);
 	AddAsset(questionText);
+	AddAsset(timer);
 	AddAsset(transition);
 	goalReports = maxReports;
 }
@@ -122,6 +139,9 @@ GGNewsModel::~GGNewsModel()
 	delete(transition);
 	delete(questionText);
 	delete(questionBubble);
+	delete(timer);
+	delete(reporter);
+	delete(mouth);
 }
 
 GGButton* GGNewsModel::GetButton(int index)
@@ -154,6 +174,22 @@ void GGNewsModel::ResetData()
 	SetContinueGame(true);
 	SetSuccess(true);
 	transition->SetDrawing(true);
+	timer->RestartTimer();
+}
+
+GGTimerAsset* GGNewsModel::GetTimer()
+{
+	return timer;
+}
+
+void GGNewsModel::ChangeMouth()
+{
+	mouth->SetCurFrame(rand() % 2 + 1);
+}
+
+void GGNewsModel::ResetMouth()
+{
+	mouth->SetCurFrame(0);
 }
 
 GGMinigameTransition* GGNewsModel::GetTransition()
@@ -166,7 +202,7 @@ GGTextAsset* GGNewsModel::GetQuestionText()
 	return questionText;
 }
 
-GGStageTransitionModel::GGStageTransitionModel(std::string tableSource, std::string envelopeSource, std::string letterSource) : letterDeceleration(1), envelopeDeceleration(-1), letterVelocity(0), envelopeVelocity(1), letterMoved(false)
+GGStageTransitionModel::GGStageTransitionModel(std::string tableSource, std::string envelopeSource, std::string letterSource) : letterDeceleration(0.1), envelopeDeceleration(-0.1), letterVelocity(0), envelopeVelocity(1), letterMoved(false)
 {
 	table = new GGStaticAsset(sf::Vector2f(0, 0), tableSource);
 	table->SetOrigin(0, 0);
