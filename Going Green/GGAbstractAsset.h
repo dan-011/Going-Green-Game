@@ -2,6 +2,7 @@
 #define __GGABSTRACTASSET_H
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "GGWindow.h"
 #include <string>
 #include <stdio.h>
@@ -130,6 +131,30 @@ private:
 
 };
 
-class GGAudioAsset : public GGAbstractAsset {
+class GGSFXAsset : public GGAbstractAsset {
+public:
+	GGSFXAsset(std::string fileName);
+	~GGSFXAsset();
+	void Play();
+	void Stop();
+	bool IsPlaying();
+	virtual void Draw() override;
+
+private:
+	sf::SoundBuffer soundBuffer;
+	sf::Sound sound;
+};
+
+class GGMusicAsset : public GGAbstractAsset {
+public:
+	GGMusicAsset(std::string fileName);
+	~GGMusicAsset();
+	void Play();
+	void Stop();
+	bool IsPlaying();
+	virtual void Draw() override;
+
+private:
+	sf::Music music;
 };
 #endif

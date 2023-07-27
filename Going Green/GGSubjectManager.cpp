@@ -1,7 +1,7 @@
 #include "GGSubjectManager.h"
 #include "TESTStage1.h"
 
-GGSubjectManager::GGSubjectManager() {
+GGSubjectManager::GGSubjectManager(): loseJingle("Assets/Music/Losejingle.wav") {
 	// add the views once implemented
 
 }
@@ -16,6 +16,8 @@ void GGSubjectManager::PlayGame() {
 		auto stage = stages[i];
 		success = stage.Play();
 		if (!success) {
+			loseJingle.Play();
+			while (loseJingle.IsPlaying()) {}
 			restart = stage.GameOver();
 		}
 		if (!restart) {

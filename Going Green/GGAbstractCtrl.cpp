@@ -101,6 +101,7 @@ GGAbstractModel* GGCannonGameCtrl::GetModel() {
 }
 void GGCannonGameCtrl::FireCannon(sf::Vector2i mousePos) {
 	cannonMdl.SetCannonFiring(true);
+	cannonMdl.GetCannonSound()->Play();
 	int curProjectileAsset = cannonMdl.GetCurProjectileAsset();
 	if (curProjectileAsset >= cannonMdl.GetNumProjectiles()) return;
 	float velX = (mousePos.x - cannonMdl.GetCannonAsset()->GetPos().x) / 400;

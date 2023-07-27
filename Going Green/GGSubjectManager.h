@@ -12,6 +12,7 @@ public:
 
 private:
 	std::vector<GGStage> stages;
+	GGSFXAsset loseJingle;
 };
 
 #endif

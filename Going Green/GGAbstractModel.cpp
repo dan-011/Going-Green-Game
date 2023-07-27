@@ -8,8 +8,10 @@ using namespace std;
 
 #define DELAY 15
 
-GGAbstractModel::GGAbstractModel() : continueGame(true), wasSuccess(true), timer(sf::Vector2f(0, 0), 50, "Assets/Fonts/Minimal5x7.ttf", 0, 0, sf::Color::White) {}
-GGAbstractModel::~GGAbstractModel() {}
+GGAbstractModel::GGAbstractModel() : continueGame(true), wasSuccess(true), timer(sf::Vector2f(0, 0), 50, "Assets/Fonts/Minimal5x7.ttf", 0, 0, sf::Color::White), backgroundMusic(NULL) {}
+GGAbstractModel::~GGAbstractModel() {
+	delete backgroundMusic;
+}
 std::vector<GGAbstractAsset*>& GGAbstractModel::GetAssets() {
 	return assets;
 }
@@ -39,6 +41,12 @@ void GGAbstractModel::SetSuccess(bool success) {
 }
 GGTimerAsset* GGAbstractModel::GetTimer() {
 	return &timer;
+}
+GGMusicAsset* GGAbstractModel::GetBackgroundMusic() {
+	return backgroundMusic;
+}
+void GGAbstractModel::AssignBackgroundMusic(std::string fileName) {
+	backgroundMusic = new GGMusicAsset(fileName);
 }
 
 GGPumpModel::GGPumpModel() : pump(new GGSheetAsset(sf::Vector2f(500, 500), "Assets/Animations/oil_game/oil_drill_sprite_sheet.png", sf::Vector2u(4, 3))), maxPumps(10), numPumps(0), maxedOut(false) {
@@ -108,7 +116,8 @@ GGCannonGameModel::GGCannonGameModel() : cannonAsset(sf::Vector2f(0, 0), "Assets
 										 cannonAngle(0),
 										 moneyAssetIcon(sf::Vector2f(0, 0), "Assets/Animations/cannon_game/money_flying.png"),
 										 ammunitionCountAsset(sf::Vector2f(0, 0), 70, "Assets/Fonts/Minimal5x7.ttf", sf::Color::White),
-										 first(true) {
+										 first(true),
+										 cannonSound("Assets/Music/CannonFire.wav") {
 	AddAsset(&backgroundAsset);
 	backgroundAsset.Scale(sf::Vector2f(4, 4));
 	backgroundAsset.SetOrigin(0, 0);
@@ -164,6 +173,8 @@ GGCannonGameModel::GGCannonGameModel() : cannonAsset(sf::Vector2f(0, 0), "Assets
 	targetWaitTicks.push_back(0);
 	targetWaitTicks.push_back(75);
 	targetWaitTicks.push_back(110);
+
+	AssignBackgroundMusic("Assets/Music/MainThemeLoop1.wav");
 }
 GGCannonGameModel::~GGCannonGameModel() {
 	for (auto asset : moneyAssets) {
@@ -284,4 +295,7 @@ void GGCannonGameModel::SetCurProjectileAsset(int index) {
 }
 int GGCannonGameModel::TargetWaitTick(int index) {
 	return targetWaitTicks[index]--;
+}
+GGSFXAsset* GGCannonGameModel::GetCannonSound() {
+	return &cannonSound;
 }

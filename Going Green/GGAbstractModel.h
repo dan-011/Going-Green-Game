@@ -19,12 +19,15 @@ public:
 	void SetSuccess(bool success);
 	virtual void ResetData() = 0;
 	virtual GGTimerAsset* GetTimer();
+	virtual GGMusicAsset* GetBackgroundMusic();
+	virtual void AssignBackgroundMusic(std::string fileName);
 
 private:
 	std::vector<GGAbstractAsset*> assets;
 	bool continueGame;
 	bool wasSuccess;
 	GGTimerAsset timer;
+	GGMusicAsset* backgroundMusic;
 };
 
 class GGPumpModel : public GGAbstractModel {
@@ -87,6 +90,7 @@ public:
 	int GetCurProjectileAsset();
 	void SetCurProjectileAsset(int index);
 	int TargetWaitTick(int index);
+	GGSFXAsset* GetCannonSound();
 
 private:
 	GGSheetAsset cannonAsset;
@@ -104,6 +108,7 @@ private:
 	std::vector<int> projectileDelays;
 	bool first;
 	int curProjectileAsset;
+	GGSFXAsset cannonSound;
 };
 
 #endif

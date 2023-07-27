@@ -8,6 +8,10 @@ GGView::~GGView() {}
 bool GGView::Show() {
 	sf::RenderWindow& window = GGWindow::Instance().GetWindow();
 	ctrl->ResetMdl();
+	GGMusicAsset* backgroundMusic = model->GetBackgroundMusic();
+	if (backgroundMusic != NULL) {
+		backgroundMusic->Play();
+	}
 	model->GetTimer()->StartTimer();
 	while (model->GetContinueGame()) {
 		window.pollEvent(GetEvent()); // check to make sure this works as intended
@@ -20,6 +24,7 @@ bool GGView::Show() {
 		}
 		window.display();
 	}
+	backgroundMusic->Stop();
 	return model->GetSuccess();
 }
 sf::Time GGView::GetElapsedTime() {

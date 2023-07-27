@@ -1,6 +1,7 @@
 #include "GGAbstractAsset.h"
 #define DEBUG 0
 #ifdef DEBUG
+#include <cassert>
 #include <iostream>
 using namespace std;
 #endif
@@ -243,3 +244,38 @@ void GGTimerAsset::StopTimer() {
 bool GGTimerAsset::GetTimerStarted() {
 	return timerStarted;
 }
+GGSFXAsset::GGSFXAsset(std::string fileName) : GGAbstractAsset(sf::Vector2f(0,0)) {
+	soundBuffer.loadFromFile(fileName);
+	sound.setBuffer(soundBuffer);
+}
+GGSFXAsset::~GGSFXAsset() {
+	sound.stop();
+}
+void GGSFXAsset::Play() {
+	sound.play();
+}
+void GGSFXAsset::Stop() {
+	sound.stop();
+}
+bool GGSFXAsset::IsPlaying() {
+	return sound.getStatus() == sf::Music::Playing;
+}
+void GGSFXAsset::Draw() {}
+
+GGMusicAsset::GGMusicAsset(std::string fileName) : GGAbstractAsset(sf::Vector2f(0, 0)) {
+	music.openFromFile(fileName);
+}
+GGMusicAsset::~GGMusicAsset() {
+	music.stop();
+}
+void GGMusicAsset::Play() {
+	music.play();
+	assert(music.getStatus() == sf::Music::Playing);
+}
+void GGMusicAsset::Stop() {
+	music.stop();
+}
+bool GGMusicAsset::IsPlaying() {
+	return music.getStatus() == sf::Music::Playing;
+}
+void GGMusicAsset::Draw() {}
