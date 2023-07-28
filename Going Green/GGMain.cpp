@@ -10,24 +10,17 @@ int main()
     GGTitleScreenCtrl titleScreenCtrl;
     GGView titleScreenView(&titleScreenCtrl);
     GGStage titleStage(&titleScreenView);
-
     GGExitTitleScreenObserver titleScreenObs(titleScreenView, titleScreenCtrl);
+    GGStartTextTickObserver startTextTickObs(titleScreenView, titleScreenCtrl);
     subjMgr.AddStage(titleStage);
 
-    /* Test Pump Game */
+    // Cannon Game
     GGCannonGameCtrl cannonCtrl;
-    GGGameOverCtrl testGameOverCtrl;
     GGView cannonView(&cannonCtrl);
-    GGView testGameOverView(&testGameOverCtrl);
-    GGStage testStage(&cannonView, &testGameOverView);
-
     GGClockMSObserver clockMSObs(cannonView, cannonCtrl);
-    GGTestGameOverTick gameOverTickObs(testGameOverView, testGameOverCtrl);
-    GGRestartGameObserver restartGameObs(testGameOverView, testGameOverCtrl);
     GGCannonTickObserver cannonClickObs(cannonView, cannonCtrl);
     GGCannonFireObserver cannonFireObs(cannonView, cannonCtrl);
     GGCannonMoveObserver cannonMoveObs(cannonView, cannonCtrl);
-
     GGProjectileTickObserver projectileTickObs0(cannonView, cannonCtrl, 0, 1);
     GGProjectileTickObserver projectileTickObs1(cannonView, cannonCtrl, 1, 1);
     GGProjectileTickObserver projectileTickObs2(cannonView, cannonCtrl, 2, 1);
@@ -48,7 +41,6 @@ int main()
     GGProjectileTickObserver projectileTickObs17(cannonView, cannonCtrl, 17, 3);
     GGProjectileTickObserver projectileTickObs18(cannonView, cannonCtrl, 18, 3);
     GGProjectileTickObserver projectileTickObs19(cannonView, cannonCtrl, 19, 3);
-
     GGTargetTickObserver targetTickObs0(cannonView, cannonCtrl, 0, 1);
     GGTargetTickObserver targetTickObs1(cannonView, cannonCtrl, 1, 1);
     GGTargetTickObserver targetTickObs2(cannonView, cannonCtrl, 2, 1);
@@ -59,7 +51,36 @@ int main()
     GGTargetTickObserver targetTickObs7(cannonView, cannonCtrl, 7, 3);
     GGTargetTickObserver targetTickObs8(cannonView, cannonCtrl, 8, 3);
     GGTargetTickObserver targetTickObs9(cannonView, cannonCtrl, 9, 3);
-    subjMgr.AddStage(testStage);
+
+    // Stage One Region
+    GGGameOverCtrl gameOverCtrlStageOne;
+    gameOverCtrlStageOne.GetModel()->StageOne();
+    GGView gameOverStageOneView(&gameOverCtrlStageOne);
+    GGRestartGameObserver restartGameObsOne(gameOverStageOneView, gameOverCtrlStageOne);
+
+    GGCompositeView stageOneView(1);
+    stageOneView.SetBackgroundMusic("Assets/Music/MainThemeLoop1.wav");
+    stageOneView.AddView(&cannonView);
+    stageOneView.AddView(&cannonView);
+    stageOneView.AddView(&cannonView);
+
+    // Stage One
+    GGStage stageOne(&stageOneView, &gameOverStageOneView);
+    subjMgr.AddStage(stageOne);
+
+
+    GGGameOverCtrl gameOverCtrlStageTwo;
+    gameOverCtrlStageTwo.GetModel()->StageTwo();
+    GGView gameOverStageTwoView(&gameOverCtrlStageTwo);
+    GGRestartGameObserver restartGameObsTwo(gameOverStageTwoView, gameOverCtrlStageTwo);
+
+    GGGameOverCtrl gameOverCtrlStageThree;
+    gameOverCtrlStageThree.GetModel()->StageThree();
+    GGView gameOverStageThreeView(&gameOverCtrlStageThree);
+    GGRestartGameObserver restartGameObsThree(gameOverStageThreeView, gameOverCtrlStageThree);
+
+
+    /* Test Pump Game */
 
     GGStageFourCtrl stageFourCtrl;
     GGView stageFourView(&stageFourCtrl);

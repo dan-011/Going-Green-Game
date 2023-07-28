@@ -24,7 +24,7 @@ GGRestartGameObserver::GGRestartGameObserver(GGView& vw, GGGameOverCtrl& control
 }
 GGRestartGameObserver::~GGRestartGameObserver() {}
 void GGRestartGameObserver::Update() {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
 		ctrl.RestartGame();
 	}
 }
@@ -139,5 +139,19 @@ GGExitTitleScreenObserver::~GGExitTitleScreenObserver() {}
 void GGExitTitleScreenObserver::Update() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
 		ctrl.ExitTitleScreen();
+	}
+}
+
+GGStartTextTickObserver::GGStartTextTickObserver(GGView& vw, GGTitleScreenCtrl& controller) : view(vw), ctrl(controller), currentTime(sf::milliseconds(0)), deltaT(sf::milliseconds(750)) {
+	view.AddObserver(this);
+}
+GGStartTextTickObserver::~GGStartTextTickObserver() {}
+void GGStartTextTickObserver::Update() {
+	if (currentTime == sf::milliseconds(0)) {
+		currentTime = view.GetElapsedTime();
+	}
+	if (view.GetElapsedTime() - currentTime >= deltaT) {
+		ctrl.SwitchTextVisibility();
+		currentTime = view.GetElapsedTime();
 	}
 }

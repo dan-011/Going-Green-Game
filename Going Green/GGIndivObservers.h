@@ -143,4 +143,17 @@ private:
 	GGView& view;
 	GGTitleScreenCtrl& ctrl;
 };
+
+class GGStartTextTickObserver : public GGAbstractObserver {
+public:
+	GGStartTextTickObserver(GGView& vw, GGTitleScreenCtrl& controller);
+	~GGStartTextTickObserver();
+	virtual void Update() override;
+
+private:
+	GGView& view;
+	GGTitleScreenCtrl& ctrl;
+	sf::Time deltaT;
+	sf::Time currentTime;
+};
 #endif

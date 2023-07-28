@@ -137,8 +137,11 @@ public:
 	virtual void StageOne() override;
 	virtual void StageTwo() override;
 	virtual void StageThree() override;
+	void SetTextVisibility(bool isVisible);
+	bool GetTextVisibility();
 
 private:
 	GGStaticAsset background;
+	GGTextAsset pressStartText;
 };
 #endif

@@ -220,3 +220,6 @@ void GGTitleScreenCtrl::ExitTitleScreen() {
 	titleScreenModel.SetSuccess(true);
 	titleScreenModel.SetContinueGame(false);
 }
+void GGTitleScreenCtrl::SwitchTextVisibility() {
+	titleScreenModel.SetTextVisibility(!titleScreenModel.GetTextVisibility());
+}

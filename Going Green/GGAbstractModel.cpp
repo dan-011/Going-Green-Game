@@ -113,7 +113,7 @@ GGCannonGameModel::GGCannonGameModel() : cannonAsset(sf::Vector2f(0, 0), "Assets
 	cannonAsset.SetOrigin(sf::Vector2f(cannonAsset.GetTextureSize().x / 3.75f, ceil(cannonAsset.GetTextureSize().y / 1.67f)));
 	cannonAsset.SetPos(sf::Vector2f(50, 675));
 	cannonAsset.SetRotation(18.5);
-	AddAsset(GetTimer());
+	// AddAsset(GetTimer());
 	GetTimer()->SetTimer(sf::Vector2u(10, 0));
 	GetTimer()->SetPos(sf::Vector2f(1175, 5));
 	GetTimer()->StartTimer();
@@ -257,7 +257,7 @@ void GGCannonGameModel::StageOne() {
 	totalProjectiles = 10;
 	totalTargets = 3;
 	targetSpeed = sf::milliseconds(90);
-	AssignBackgroundMusic("Assets/Music/MainThemeLoop1.wav");
+	// AssignBackgroundMusic("Assets/Music/MainThemeLoop1.wav");
 	UpdateAmmunitionCount(GetNumProjectiles());
 	backgroundAsset.ChangeBitmap("Assets/Backgrounds/court_1.png");
 	for (int i = 0; i < GetNumProjectiles(); i++) {
@@ -306,7 +306,7 @@ void GGCannonGameModel::StageTwo() {
 	totalTargets = 5;
 	targetSpeed = sf::milliseconds(50);
 	UpdateAmmunitionCount(GetNumProjectiles());
-	AssignBackgroundMusic("Assets/Music/MainThemeLoop2.wav");
+	// AssignBackgroundMusic("Assets/Music/MainThemeLoop2.wav");
 	backgroundAsset.ChangeBitmap("Assets/Backgrounds/court_2.png");
 
 	for (auto target : targetAssets) {
@@ -358,7 +358,7 @@ void GGCannonGameModel::StageThree() {
 	totalTargets = 10;
 	targetSpeed = sf::milliseconds(30);
 	UpdateAmmunitionCount(GetNumProjectiles());
-	AssignBackgroundMusic("Assets/Music/MainThemeLoop3.wav");
+	// AssignBackgroundMusic("Assets/Music/MainThemeLoop3.wav");
 	backgroundAsset.ChangeBitmap("Assets/Backgrounds/court_3.png");
 
 	for (auto target : targetAssets) {
@@ -435,14 +435,23 @@ void GGStageFourModel::StageOne() {}
 void GGStageFourModel::StageTwo() {}
 void GGStageFourModel::StageThree() {}
 
-GGTitleScreenModel::GGTitleScreenModel() : background(sf::Vector2f(0, 0), "Assets/Backgrounds/title.png") {
+GGTitleScreenModel::GGTitleScreenModel() : background(sf::Vector2f(0, 0), "Assets/Backgrounds/title.png"), pressStartText(sf::Vector2f(0,0), 50, "Assets/Fonts/Minimal5x5Monospaced.ttf", sf::Color::Black) {
 	background.SetOrigin(sf::Vector2f(0, 0));
 	background.SetPos(sf::Vector2f(0, 0));
 	background.Scale(sf::Vector2f(4, 4));
 	AddAsset(&background);
 	AssignBackgroundMusic("Assets/Music/TitleScreenLoop.wav");
+	pressStartText.SetText("Press ENTER to Start");
+	pressStartText.SetPos(sf::Vector2f(320, 650));
+	AddAsset(&pressStartText);
 }
 GGTitleScreenModel::~GGTitleScreenModel() {}
 void GGTitleScreenModel::StageOne() {}
 void GGTitleScreenModel::StageTwo() {}
 void GGTitleScreenModel::StageThree() {}
+void GGTitleScreenModel::SetTextVisibility(bool isVisible) {
+	pressStartText.SetVisibility(isVisible);
+}
+bool GGTitleScreenModel::GetTextVisibility() {
+	return pressStartText.GetVisibility();
+}

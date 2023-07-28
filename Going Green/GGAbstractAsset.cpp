@@ -6,13 +6,19 @@
 using namespace std;
 #endif
 
-GGAbstractAsset::GGAbstractAsset(sf::Vector2f pos): position(pos) {}
+GGAbstractAsset::GGAbstractAsset(sf::Vector2f pos): position(pos), isVisible(true) {}
 GGAbstractAsset::~GGAbstractAsset() {}
 void GGAbstractAsset::SetPos(sf::Vector2f pos) {
 	position = pos;
 }
 sf::Vector2f GGAbstractAsset::GetPos() {
 	return position;
+}
+void GGAbstractAsset::SetVisibility(bool visibility) {
+	isVisible = visibility;
+}
+bool GGAbstractAsset::GetVisibility() {
+	return isVisible;
 }
 
 GGSpriteAsset::GGSpriteAsset(sf::Vector2f pos) : GGAbstractAsset(pos) {
@@ -188,7 +194,9 @@ void GGTextAsset::SetText(std::string txt) {
 	assetText.setString(txt);
 }
 void GGTextAsset::Draw() {
-	GGWindow::Instance().GetWindow().draw(assetText);
+	if (GetVisibility()) {
+		GGWindow::Instance().GetWindow().draw(assetText);
+	}
 }
 void GGTextAsset::SetPos(sf::Vector2f pos) {
 	assetText.setPosition(pos);

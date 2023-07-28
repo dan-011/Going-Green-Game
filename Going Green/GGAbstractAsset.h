@@ -14,10 +14,12 @@ public:
 	virtual void SetPos(sf::Vector2f pos);
 	sf::Vector2f GetPos();
 	virtual void Draw() = 0; // TODO: refactor
+	void SetVisibility(bool visibility);
+	bool GetVisibility();
 
 private:
 	sf::Vector2f position;
-
+	bool isVisible;
 };
 
 class GGSpriteAsset : public GGAbstractAsset {
@@ -132,7 +134,6 @@ private:
 	int millisecond;
 	sf::Vector2u startTime;
 	bool timerStarted;
-
 };
 
 class GGSFXAsset : public GGAbstractAsset {

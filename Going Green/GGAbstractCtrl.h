@@ -68,6 +68,7 @@ public:
 	~GGTitleScreenCtrl();
 	virtual GGAbstractModel* GetModel() override;
 	void ExitTitleScreen();
+	void SwitchTextVisibility();
 
 private:
 	GGTitleScreenModel titleScreenModel;
