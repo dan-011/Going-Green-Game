@@ -165,6 +165,7 @@ void GGNewsCtrl::ProcessClick(sf::Vector2f mousePos)
 
 void GGNewsCtrl::GenerateQuestion()
 {
+	newsMdl.PlayVoiceSFX();
 	int qNum = rand() % questions.size();
 	newsMdl.GetQuestionText()->SetText(questions[qNum]);
 	goodAnswer = rand() % 2;
@@ -222,7 +223,7 @@ void GGNewsCtrl::SetNewClick(bool click)
 {
 	newClick = click;
 }
-GGStageTransitionCtrl::GGStageTransitionCtrl(std::string tablePath, std::string envelopePath, std::string letterPath) : transMdl(tablePath, envelopePath, letterPath)
+GGStageTransitionCtrl::GGStageTransitionCtrl() : transMdl()
 {
 	transMdl.SetEnvelopeVelocity(initialEnvelopeVelocity);
 }
@@ -263,6 +264,7 @@ void GGStageTransitionCtrl::MoveLetter()
 	if (!IsLetterMoving())
 	{
 		transMdl.SetLetterVelocity(initialLetterVelocity);
+		transMdl.PlayLetterSound();
 		return;
 	}
 	transMdl.GetLetter()->SetPos(sf::Vector2f(transMdl.GetLetter()->GetPos().x, transMdl.GetLetter()->GetPos().y + transMdl.GetLetterVelocity()));

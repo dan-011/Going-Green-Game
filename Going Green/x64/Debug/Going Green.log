@@ -1,10 +1,8 @@
-﻿  GGAbstractAsset.cpp
-C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractAsset.cpp(252,52): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  GGAbstractCtrl.cpp
+﻿  GGAbstractCtrl.cpp
 C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractCtrl.h(79,33): warning C4305: 'initializing': truncation from 'double' to 'float'
   GGAbstractModel.cpp
-C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractModel.cpp(205,147): warning C4305: 'initializing': truncation from 'double' to 'const float'
-C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractModel.cpp(205,174): warning C4305: 'initializing': truncation from 'double' to 'const float'
+C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractModel.cpp(298,70): warning C4305: 'initializing': truncation from 'double' to 'const float'
+C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractModel.cpp(298,97): warning C4305: 'initializing': truncation from 'double' to 'const float'
   GGIndivObservers.cpp
 C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractCtrl.h(79,33): warning C4305: 'initializing': truncation from 'double' to 'float'
   GGMain.cpp
@@ -17,5 +15,4 @@ C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractCtrl.h(79,33)
   GGView.cpp
 C:\Users\djcas\source\repos\Going-Green-Game\Going Green\GGAbstractCtrl.h(79,33): warning C4305: 'initializing': truncation from 'double' to 'float'
   Generating Code...
-  LINK : C:\Users\djcas\source\repos\Going-Green-Game\x64\Debug\Going Green.exe not found or not built by the last incremental link; performing full link
   Going Green.vcxproj -> C:\Users\djcas\source\repos\Going-Green-Game\x64\Debug\Going Green.exe
