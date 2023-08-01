@@ -281,7 +281,7 @@ void GGNewsModel::StageOne()
 	{
 		voicelines[i]->ChangeSource("Assets/Music/holynews" + to_string(i + 1) + ".ogg");
 	}
-	timer->SetTimer(sf::Vector2u(45, 0));
+	timer->SetTimer(sf::Vector2u(60, 0));
 }
 
 void GGNewsModel::StageTwo()
