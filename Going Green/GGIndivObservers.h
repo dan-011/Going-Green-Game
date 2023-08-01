@@ -243,4 +243,29 @@ private:
 	sf::Time deltaT;
 	sf::Time currentTime;
 };
+
+class GGRollCreditsObserver : public GGAbstractObserver {
+public:
+	GGRollCreditsObserver(GGView& vw, GGStageFourCtrl& controller);
+	~GGRollCreditsObserver();
+	virtual void Update() override;
+
+private:
+	GGView& view;
+	GGStageFourCtrl& ctrl;
+	sf::Time deltaT;
+	sf::Time currentTime;
+};
+
+class GGTransitionExitObserver : public GGAbstractObserver {
+public:
+	GGTransitionExitObserver(GGView& vw, GGAbstractCtrl& controller);
+	~GGTransitionExitObserver();
+	virtual void Update() override;
+
+private:
+	GGView& view;
+	GGAbstractCtrl& ctrl;
+	sf::Time waitTime;
+};
 #endif

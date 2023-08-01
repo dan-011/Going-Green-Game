@@ -28,6 +28,8 @@ public:
 	virtual void StageThree() = 0;
 	bool GetClickSwitch();
 	void SetClickSwitch(bool clckSwtch);
+	sf::Time GetTransitionTime();
+	void SetTransitionTime(sf::Time time);
 
 private:
 	std::vector<GGAbstractAsset*> assets;
@@ -37,6 +39,8 @@ private:
 	GGMusicAsset* backgroundMusic;
 	int stage;
 	bool clickSwitch;
+	sf::Time transitionTime;
+
 };
 
 class GGPumpModel : public GGAbstractModel {
@@ -215,11 +219,15 @@ public:
 	virtual void StageOne() override;
 	virtual void StageTwo() override;
 	virtual void StageThree() override;
+	GGTextAsset* GetCredits();
+	int WaitTick();
 
 private:
 	std::vector<std::string> screenFileNames;
 	int screenIndex;
 	GGStaticAsset background;
+	GGTextAsset creditsAsset;
+	int waitTicks;
 };
 
 class GGBookendsModel : public GGAbstractModel {
@@ -271,5 +279,6 @@ public:
 
 private:
 	GGStaticAsset backgroundAsset;
+	GGTextAsset messageAsset;
 };
 #endif

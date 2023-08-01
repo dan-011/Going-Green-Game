@@ -145,6 +145,8 @@ public:
 	virtual void Draw() override;
 	virtual void SetPos(sf::Vector2f pos) override;
 	void SetSize(int sz);
+	void SetOutlineColor(sf::Color clr);
+	void SetOutlineThickness(float thickness);
 
 private:
 	sf::Font assetFont;

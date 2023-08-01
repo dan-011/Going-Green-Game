@@ -1,0 +1,15 @@
+﻿  GGAbstractAsset.cpp
+  GGAbstractCtrl.cpp
+  GGAbstractModel.cpp
+  GGIndivObservers.cpp
+  GGMain.cpp
+  GGStage.cpp
+  GGSubject.cpp
+  GGSubjectManager.cpp
+  GGView.cpp
+  GGWindow.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 1269 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Going Green.vcxproj -> C:\Users\dpali\Documents\C++ Projects\Going Green\x64\Release\Going Green.exe

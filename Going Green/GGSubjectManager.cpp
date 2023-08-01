@@ -1,5 +1,4 @@
 #include "GGSubjectManager.h"
-#include "TESTStage1.h"
 
 GGSubjectManager::GGSubjectManager(): loseJingle("Assets/Music/Losejingle.wav"), winJingle("Assets/Music/WinJingle.wav"), secretEndingView(&secretEndingCtrl) {}
 GGSubjectManager::~GGSubjectManager() {}

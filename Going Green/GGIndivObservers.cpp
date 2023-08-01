@@ -349,3 +349,34 @@ void GGContinueGameObserver::Update() {
 		ctrl.Continue();
 	}
 }
+
+GGRollCreditsObserver::GGRollCreditsObserver(GGView& vw, GGStageFourCtrl& controller) : view(vw), ctrl(controller), currentTime(sf::milliseconds(0)), deltaT(sf::milliseconds(30)) {
+	view.AddObserver(this);
+}
+GGRollCreditsObserver::~GGRollCreditsObserver() {}
+void GGRollCreditsObserver::Update() {
+	if (currentTime == sf::milliseconds(0)) {
+		currentTime = view.GetElapsedTime();
+	}
+	if (view.GetElapsedTime() - currentTime >= deltaT) {
+		ctrl.ShiftCredits();
+		currentTime = view.GetElapsedTime();
+	}
+}
+
+GGTransitionExitObserver::GGTransitionExitObserver(GGView& vw, GGAbstractCtrl& controller) : view(vw), ctrl(controller), waitTime(sf::seconds(2.5)) {
+	view.AddObserver(this);
+}
+GGTransitionExitObserver::~GGTransitionExitObserver() {}
+void GGTransitionExitObserver::Update() {
+	if (ctrl.GetModel()->GetTransitionTime() == sf::seconds(0)) {
+		ctrl.GetModel()->SetTransitionTime(view.GetElapsedTime());
+	}
+	if (view.GetElapsedTime() - ctrl.GetModel()->GetTransitionTime() > waitTime) {
+		ctrl.RemoveTransition();
+		GGTimerAsset* timer = ctrl.GetModel()->GetTimer();
+		if (timer != NULL) {
+			timer->StartTimer();
+		}
+	}
+}

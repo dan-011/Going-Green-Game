@@ -38,6 +38,7 @@ int main()
     GGPumpClickObserver pumpClickObs(pumpView, pumpCtrl);
     GGPumpTickObserver pumptickObs(pumpView, pumpCtrl, sf::milliseconds(55));
     GGPumpTimerObserver pumpTimerObs(pumpView, pumpCtrl);
+    GGTransitionExitObserver pumpTransitionExitObs(pumpView, pumpCtrl);
 
     // News Game
     GGNewsCtrl newsCtrl;
@@ -46,6 +47,7 @@ int main()
     GGNewsTickObserver buttonTickObs(newsView, newsCtrl, sf::milliseconds(55));
     GGNewsButtonClickObserver buttonClickObs(newsView, newsCtrl);
     GGNewsTimerObserver newsTimerObs(newsView, newsCtrl);
+    GGTransitionExitObserver newsTransitionExitObs(newsView, newsCtrl);
 
     // Cannon Game
     GGCannonGameCtrl cannonCtrl;
@@ -84,6 +86,7 @@ int main()
     GGTargetTickObserver targetTickObs7(cannonView, cannonCtrl, 7, 3);
     GGTargetTickObserver targetTickObs8(cannonView, cannonCtrl, 8, 3);
     GGTargetTickObserver targetTickObs9(cannonView, cannonCtrl, 9, 3);
+    GGTransitionExitObserver cannonTransitionExitObs(cannonView, cannonCtrl);
 
     // Views Vector
     std::vector<GGView*> views;
@@ -145,6 +148,7 @@ int main()
     GGView stageFourView(&stageFourCtrl);
     GGStage stageFour(&stageFourView);
     GGStageFourSwitchObserver stageFourSwitchObs(stageFourView, stageFourCtrl);
+    GGRollCreditsObserver rollCreditsObs(stageFourView, stageFourCtrl);
     subjMgr.AddStage(stageFour);
 
     subjMgr.PlayGame();

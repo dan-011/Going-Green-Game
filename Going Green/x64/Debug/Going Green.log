@@ -1,2 +1,12 @@
-﻿  GGAbstractModel.cpp
+﻿  GGAbstractAsset.cpp
+  GGAbstractCtrl.cpp
+  GGAbstractModel.cpp
+  GGIndivObservers.cpp
+  GGMain.cpp
+  GGStage.cpp
+  GGSubject.cpp
+  GGSubjectManager.cpp
+  GGView.cpp
+  GGWindow.cpp
+  Generating Code...
   Going Green.vcxproj -> C:\Users\dpali\Documents\C++ Projects\Going Green\x64\Debug\Going Green.exe

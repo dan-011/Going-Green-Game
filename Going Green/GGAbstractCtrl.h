@@ -14,6 +14,7 @@ public:
 	virtual bool TimerTick();
 	bool GetClickSwitch();
 	void SetClickSwitch(bool clckSwtch);
+	virtual void RemoveTransition();
 };
 
 class GGPumpCtrl : public GGAbstractCtrl {
@@ -31,6 +32,7 @@ public:
 	virtual int GetQueuedPumps();
 	virtual bool TimerTick();
 	virtual bool TimerCompleted();
+	virtual void RemoveTransition() override;
 
 private:
 	GGPumpModel pumpMdl;
@@ -57,12 +59,14 @@ public:
 	virtual void SetAnimatingMouth(bool val);
 	virtual bool GetNewClick();
 	virtual void SetNewClick(bool click);
+	virtual void RemoveTransition() override;
+
 private:
 	GGNewsModel newsMdl;
 	int numAnswers;
 	int goodAnswer;
-	std::vector<std::string> questions = { "Experts say that ___ can be blamed for recent climate change", "We need to take action against climate change or things will be ___", "Recent effects of oil usage deemed ___ for the environment", "Natural habitats are being ___ by industry action"};
-	std::vector<std::string> answers = { "Industry", "People", "Awful", "Fine", "Bad", "Good", "Damaged", "Helped" };
+	std::vector<std::string> questions = { "Experts say that ___ can be blamed for recent climate change", "If we don't focus on climate change, things will be ___", "Recent effects of oil usage deemed ___ for the environment", "Natural habitats are being ___ by industry action", "Restrictions on our consumption of fossil fuels are ___", "___ are putting in enough effort to save the environment", "Removing funds from company expansion is ___"};
+	std::vector<std::string> answers = { "Industry", "People", "Awful", "Fine", "Bad", "Good", "Damaged", "Helped", "Good", "Bad", "People", "Industry", "Fine", "Awful"};
 	bool isAnimatingMouth = false;
 	bool newClick = false;
 };
@@ -95,12 +99,12 @@ public:
 	bool IsCannonFiring();
 	void ChangeCannonAngle(sf::Vector2i mousePos);
 	void ProjectileTick(sf::Time deltaT, int index);
-	// virtual void EndGame();
 	bool ProjectileFired(int index);
 	bool ProjectileFinised(int index);
 	bool TargetHit(int index);
 	void TargetTick(int index);
 	sf::Time GetTargetDeltaT();
+	virtual void RemoveTransition() override;
 
 private:
 	GGCannonGameModel cannonMdl;
@@ -116,6 +120,7 @@ public:
 	virtual GGAbstractModel* GetModel() override;
 	void NextGame();
 	bool ContinueOntoNext();
+	void ShiftCredits();
 
 private:
 	GGStageFourModel stageFourModel;

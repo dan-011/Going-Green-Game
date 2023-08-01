@@ -60,7 +60,7 @@ bool GGAbstractCtrl::GetClickSwitch() {
 void GGAbstractCtrl::SetClickSwitch(bool clckSwtch) {
 	GetModel()->SetClickSwitch(clckSwtch);
 }
-
+void GGAbstractCtrl::RemoveTransition() {}
 GGPumpCtrl::GGPumpCtrl() {
 
 }
@@ -82,8 +82,8 @@ void GGPumpCtrl::AnimateOil()
 void GGPumpCtrl::PumpClicked() {
 	if (pumpMdl.GetTransition()->GetDrawing())
 	{
-		pumpMdl.GetTransition()->SetDrawing(false);
-		pumpMdl.GetTimer()->StartTimer();
+		// pumpMdl.GetTransition()->SetDrawing(false);
+		// pumpMdl.GetTimer()->StartTimer();
 		return;
 	}
 	pumpMdl.SetNumPumps(pumpMdl.GetNumPumps() + 1);
@@ -132,6 +132,9 @@ bool GGPumpCtrl::TimerCompleted()
 {
 	return pumpMdl.GetTimer()->TimerCompleted();
 }
+void GGPumpCtrl::RemoveTransition() {
+	pumpMdl.GetTransition()->SetDrawing(false);
+}
 
 GGNewsCtrl::GGNewsCtrl() : newsMdl(10)
 {
@@ -147,13 +150,14 @@ GGAbstractModel* GGNewsCtrl::GetModel()
 
 void GGNewsCtrl::EndGame()
 {
+	newsMdl.StopAllVoices();
 	newsMdl.SetContinueGame(false);
 	newsMdl.SetSuccess(false);
-	newsMdl.StopAllVoices();
 }
 
 void GGNewsCtrl::WinGame()
 {
+	newsMdl.StopAllVoices();
 	newsMdl.SetContinueGame(false);
 	newsMdl.SetSuccess(true);
 }
@@ -192,6 +196,7 @@ void GGNewsCtrl::PressButton(int button)
 	}
 	if (newsMdl.GoalMet())
 	{
+		newsMdl.StopAllVoices();
 		newsMdl.SetSuccess(true);
 		newsMdl.SetContinueGame(false);
 	}
@@ -201,8 +206,8 @@ void GGNewsCtrl::ProcessClick(sf::Vector2f mousePos)
 {
 	if (newsMdl.GetTransition()->GetDrawing())
 	{
-		newsMdl.GetTransition()->SetDrawing(false);
-		newsMdl.GetTimer()->StartTimer();
+		// newsMdl.GetTransition()->SetDrawing(false);
+		// newsMdl.GetTimer()->StartTimer();
 		return;
 	}
 	if (newsMdl.GetButton(0)->GetGlobalBounds().contains(mousePos))
@@ -275,6 +280,10 @@ void GGNewsCtrl::SetNewClick(bool click)
 {
 	newClick = click;
 }
+void GGNewsCtrl::RemoveTransition() {
+	newsMdl.GetTransition()->SetDrawing(false);
+}
+
 GGStageTransitionCtrl::GGStageTransitionCtrl() : transMdl()
 {
 	transMdl.SetEnvelopeVelocity(initialEnvelopeVelocity);
@@ -345,8 +354,8 @@ GGAbstractModel* GGCannonGameCtrl::GetModel() {
 }
 void GGCannonGameCtrl::FireCannon(sf::Vector2i mousePos) {
 	if (!cannonMdl.GetGameStarted()) {
-		cannonMdl.GetTransition()->SetDrawing(false);
-		cannonMdl.SetGameStarted(true);
+		// cannonMdl.GetTransition()->SetDrawing(false);
+		// cannonMdl.SetGameStarted(true);
 		return;
 	}
 	cannonMdl.SetCannonFiring(true);
@@ -475,6 +484,10 @@ void GGCannonGameCtrl::TargetTick(int index) {
 sf::Time GGCannonGameCtrl::GetTargetDeltaT() {
 	return cannonMdl.GetTagetSpeed();
 }
+void GGCannonGameCtrl::RemoveTransition() {
+	cannonMdl.GetTransition()->SetDrawing(false);
+	cannonMdl.SetGameStarted(true);
+}
 
 GGStageFourCtrl::GGStageFourCtrl() {}
 GGStageFourCtrl::~GGStageFourCtrl() {}
@@ -486,6 +499,12 @@ void GGStageFourCtrl::NextGame() {
 }
 bool GGStageFourCtrl::ContinueOntoNext() {
 	return stageFourModel.GetScreenNumber() < 3;
+}
+void GGStageFourCtrl::ShiftCredits() {
+	sf::Vector2f curPos = stageFourModel.GetCredits()->GetPos();
+	if (stageFourModel.GetScreenNumber() == 3 && curPos.y > -900 && stageFourModel.WaitTick() < 0) {
+		stageFourModel.GetCredits()->SetPos(sf::Vector2f(curPos.x, curPos.y - 1));
+	}
 }
 
 GGBookendsCtrl::GGBookendsCtrl(GGBookendsModel* bookendMdl) : bookendModel(bookendMdl) {}

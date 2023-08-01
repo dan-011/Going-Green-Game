@@ -311,6 +311,7 @@ GGTextAsset::GGTextAsset(sf::Vector2f pos, unsigned int size, const std::string 
 	assetText.setCharacterSize(size);
 	assetText.setFillColor(clr);
 	assetText.setPosition(pos);
+	assetText.setOutlineColor(sf::Color::Black);
 }
 GGTextAsset::~GGTextAsset() {}
 void GGTextAsset::SetText(std::string txt) {
@@ -328,7 +329,12 @@ void GGTextAsset::SetPos(sf::Vector2f pos) {
 void GGTextAsset::SetSize(int sz) {
 	assetText.setCharacterSize(sz);
 }
-
+void GGTextAsset::SetOutlineColor(sf::Color clr) {
+	assetText.setOutlineColor(clr);
+}
+void GGTextAsset::SetOutlineThickness(float thickness) {
+	assetText.setOutlineThickness(thickness);
+}
 
 GGTimerAsset::GGTimerAsset(sf::Vector2f pos, unsigned int size, const std::string fontFileName, int sec, int ms, sf::Color clr) : GGTextAsset(pos, size, fontFileName, clr), second(sec), millisecond(ms), startTime(sec, ms), timerStarted(false) {
 	sprintf_s(timerStr, "%d.0%d", second, millisecond);

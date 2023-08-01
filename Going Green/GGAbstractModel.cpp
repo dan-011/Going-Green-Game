@@ -8,7 +8,7 @@ using namespace std;
 
 #define DELAY 15
 
-GGAbstractModel::GGAbstractModel() : continueGame(true), wasSuccess(true), timer(sf::Vector2f(0, 0), 50, "Assets/Fonts/Minimal5x7.ttf", 0, 0, sf::Color::White), backgroundMusic(NULL), stage(1), clickSwitch(false) {}
+GGAbstractModel::GGAbstractModel() : continueGame(true), wasSuccess(true), timer(sf::Vector2f(0, 0), 50, "Assets/Fonts/Minimal5x7.ttf", 0, 0, sf::Color::White), backgroundMusic(NULL), stage(1), clickSwitch(false), transitionTime(sf::seconds(0)) {}
 GGAbstractModel::~GGAbstractModel() {
 	if(backgroundMusic != NULL){
 		delete backgroundMusic;
@@ -21,6 +21,7 @@ void GGAbstractModel::ResetData() {
 	SetContinueGame(true);
 	SetSuccess(true);
 	SetClickSwitch(false);
+	SetTransitionTime(sf::seconds(0));
 }
 void GGAbstractModel::AddAsset(GGAbstractAsset* asset) {
 	assets.push_back(asset);
@@ -71,6 +72,12 @@ bool GGAbstractModel::GetClickSwitch() {
 }
 void GGAbstractModel::SetClickSwitch(bool clckSwtch) {
 	clickSwitch = clckSwtch;
+}
+sf::Time GGAbstractModel::GetTransitionTime() {
+	return transitionTime;
+}
+void GGAbstractModel::SetTransitionTime(sf::Time time) {
+	transitionTime = time;
 }
 
 GGPumpModel::GGPumpModel() : pump(new GGSheetAsset(sf::Vector2f(650, 292), "Assets/Animations/oil_game/oil_drill_sprite_sheet.png", sf::Vector2u(4, 3))), maxPumps(10), numPumps(0), maxedOut(false), goalPumps(25), totalPumps(0), oil(new GGSheetAsset(sf::Vector2f(590, 360), "Assets/Animations/oil_game/oil_sprite_sheet.png", sf::Vector2u(3, 3), true, false)),
@@ -294,7 +301,7 @@ void GGNewsModel::StageTwo()
 	{
 		voicelines[i]->ChangeSource("Assets/Music/sadnews" + to_string(i + 1) + ".ogg");
 	}
-	timer->SetTimer(sf::Vector2u(30, 0));
+	timer->SetTimer(sf::Vector2u(40, 0));
 }
 
 void GGNewsModel::StageThree()
@@ -307,7 +314,7 @@ void GGNewsModel::StageThree()
 	{
 		voicelines[i]->ChangeSource("Assets/Music/saddernews" + to_string(i + 1) + ".ogg");
 	}
-	timer->SetTimer(sf::Vector2u(15, 0));
+	timer->SetTimer(sf::Vector2u(25, 0));
 }
 
 GGTimerAsset* GGNewsModel::GetTimer()
@@ -509,7 +516,7 @@ GGCannonGameModel::GGCannonGameModel() : cannonAsset(sf::Vector2f(0, 0), "Assets
 										 totalTargets(3),
 										 targetSpeed(sf::milliseconds(90)),
 										 hitCount(0),
-										 transitionAsset("Lobby!", "Fire money to pay\nthe lobbyists"),
+										 transitionAsset("Lobby!", "Fire money to pay the lobbyist\n\t  (use the mouse to control\n\t\t\theight and distance)"),
 										 gameStarted(false) {
 	AddAsset(&backgroundAsset);
 	backgroundAsset.Scale(sf::Vector2f(4, 4));
@@ -721,7 +728,7 @@ void GGCannonGameModel::StageTwo() {
 	int oldNumProjectiles = GetNumProjectiles();
 	totalProjectiles = 15;
 	totalTargets = 5;
-	targetSpeed = sf::milliseconds(40);
+	targetSpeed = sf::milliseconds(35);
 	UpdateAmmunitionCount(GetNumProjectiles());
 	// AssignBackgroundMusic("Assets/Music/MainThemeLoop2.wav");
 	backgroundAsset.ChangeBitmap("Assets/Backgrounds/court_2.png");
@@ -835,7 +842,7 @@ void GGCannonGameModel::SetGameStarted(bool startGame) {
 	gameStarted = startGame;
 }
 
-GGStageFourModel::GGStageFourModel() : screenIndex(0), background(sf::Vector2f(0, 0), "Assets/Backgrounds/forest_4.png") {
+GGStageFourModel::GGStageFourModel() : screenIndex(0), background(sf::Vector2f(0, 0), "Assets/Backgrounds/forest_4.png"), creditsAsset(sf::Vector2f(0, 0), 60, "Assets/Fonts/Minimal5x7.ttf", sf::Color::Black), waitTicks(60) {
 	background.Scale(sf::Vector2f(4, 4));
 	background.SetOrigin(sf::Vector2f(0, 0));
 	background.SetPos(sf::Vector2f(0, 0));
@@ -846,6 +853,12 @@ GGStageFourModel::GGStageFourModel() : screenIndex(0), background(sf::Vector2f(0
 	screenFileNames.push_back("Assets/Backgrounds/lose_4.png");
 
 	AddAsset(&background);
+
+	creditsAsset.SetText("\t\t\t\t\t\tdan-011 - Programming Lead, Game Engine Creation\n\n\t\t\t\t\t\t sherifftumbleweed - Narrative Lead, Programming\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\tALY3N - Background Art\n\n\t\t\t\t\t\t\t\t\t\t\t\t\tCor.3 - Animations and Music\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t Bignuts - Cutscene Art\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t neocraftz - Animations\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   Strams - Music\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  Going Green");
+	creditsAsset.SetPos(sf::Vector2f(0, 700));
+	creditsAsset.SetOutlineColor(sf::Color::White);
+	// creditsAsset.SetOutlineThickness(.5f);
+	AddAsset(&creditsAsset);
 }
 GGStageFourModel::~GGStageFourModel() {}
 int GGStageFourModel::GetScreenNumber() {
@@ -858,11 +871,17 @@ void GGStageFourModel::ResetData() {
 	GGAbstractModel::ResetData();
 	screenIndex = 0;
 	background.ChangeBitmap(screenFileNames[screenIndex]);
+	waitTicks = 60;
 }
 void GGStageFourModel::StageOne() {}
 void GGStageFourModel::StageTwo() {}
 void GGStageFourModel::StageThree() {}
-
+GGTextAsset* GGStageFourModel::GetCredits() {
+	return &creditsAsset;
+}
+int GGStageFourModel::WaitTick() {
+	return waitTicks--;
+}
 GGBookendsModel::~GGBookendsModel() {}
 GGTitleScreenModel::GGTitleScreenModel() : background(sf::Vector2f(0, 0), "Assets/Backgrounds/title.png"), pressStartText(sf::Vector2f(0,0), 50, "Assets/Fonts/Minimal5x5Monospaced.ttf", sf::Color::Black) {
 	background.SetOrigin(sf::Vector2f(0, 0));
@@ -928,11 +947,15 @@ bool GGGameOverModel::GetTextVisibility() {
 	return restartGameText.GetVisibility();
 }
 
-GGSecretEndingModel::GGSecretEndingModel() : backgroundAsset(sf::Vector2f(0, 0), "Assets/Backgrounds/secret_ending.png") {
+GGSecretEndingModel::GGSecretEndingModel() : backgroundAsset(sf::Vector2f(0, 0), "Assets/Backgrounds/secret_ending.png"), messageAsset(sf::Vector2f(0, 0), 100, "Assets/Fonts/Minimal3x5.ttf", sf::Color(0x24222EFF)) {
 	backgroundAsset.Scale(sf::Vector2f(4, 4));
 	backgroundAsset.SetOrigin(sf::Vector2f(0, 0));
 	AddAsset(&backgroundAsset);
 	AssignBackgroundMusic("Assets/Music/WinJingle.wav", false);
+
+	messageAsset.SetPos(sf::Vector2f(250, 100));
+	messageAsset.SetText("\t\tYOU'RE FIRED!!!\n\t\t\t...but what a\n\t\twonderful day!");
+	AddAsset(&messageAsset);
 }
 GGSecretEndingModel::~GGSecretEndingModel() {}
 void GGSecretEndingModel::StageOne() {}
