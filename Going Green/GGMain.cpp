@@ -11,7 +11,7 @@ int main()
     /* Test Pump Game */
     GGPumpCtrl testCtrl;
     GGNewsCtrl newsCtrl;
-    GGStageTransitionCtrl stageTransitionCtrl("Assets/Animations/stage_transition/table_1.png", "Assets/Animations/stage_transition/env1.png", "Assets/Animations/stage_transition/letter_1.png");
+    GGStageTransitionCtrl stageTransitionCtrl;
     GGTestGameOverCtrl testGameOverCtrl;
 
     GGView testView(&testCtrl);

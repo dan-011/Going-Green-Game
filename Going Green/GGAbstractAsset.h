@@ -2,6 +2,7 @@
 #define __GGABSTRACTASSET_H
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "GGWindow.h"
 #include <string>
 
@@ -34,6 +35,7 @@ public:
 	virtual void Draw() override;
 	virtual sf::Vector2u GetTextureSize() = 0;
 	virtual sf::FloatRect GetGlobalBounds();
+	virtual void ChangeBitmap(std::string fileName);
 
 protected:
 	sf::Sprite& GetSprite();
@@ -55,6 +57,7 @@ public:
 	virtual bool CheckFinishedAnimating();
 	virtual void SetFinishedAnimating(bool finished);
 	virtual sf::Vector2u GetTextureSize() override;
+	virtual void ChangeBitmap(std::string fileName);
 
 private:
 	sf::Texture assetTexture;
@@ -123,6 +126,7 @@ public:
 	GGStaticAsset(sf::Vector2f pos, const std::string fileName);
 	virtual ~GGStaticAsset();
 	virtual sf::Vector2u GetTextureSize() override;
+	virtual void ChangeBitmap(std::string fileName);
 
 private:
 	sf::Texture assetTexture;
@@ -165,4 +169,33 @@ private:
 	bool timerStarted;
 
 };
+
+class GGSFXAsset : public GGAbstractAsset {
+public:
+	GGSFXAsset(std::string fileName);
+	~GGSFXAsset();
+	void Play();
+	void Stop();
+	bool IsPlaying();
+	virtual void Draw() override;
+	virtual void ChangeSource(std::string path);
+
+private:
+	sf::SoundBuffer soundBuffer;
+	sf::Sound sound;
+};
+
+class GGMusicAsset : public GGAbstractAsset {
+public:
+	GGMusicAsset(std::string fileName);
+	~GGMusicAsset();
+	void Play();
+	void Stop();
+	bool IsPlaying();
+	virtual void Draw() override;
+
+private:
+	sf::Music music;
+};
+
 #endif

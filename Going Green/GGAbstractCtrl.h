@@ -65,7 +65,7 @@ private:
 class GGStageTransitionCtrl : public GGAbstractCtrl
 {
 public:
-	GGStageTransitionCtrl(std::string tablePath, std::string envelopePath, std::string letterPath);
+	GGStageTransitionCtrl();
 	virtual ~GGStageTransitionCtrl();
 	virtual GGAbstractModel* GetModel() override;
 	virtual void WinGame();

@@ -11,6 +11,7 @@ GGAbstractAsset::~GGAbstractAsset() {}
 void GGAbstractAsset::SetPos(sf::Vector2f pos) {
 	position = pos;
 }
+
 sf::Vector2f GGAbstractAsset::GetPos() {
 	return position;
 }
@@ -53,6 +54,11 @@ void GGSpriteAsset::Draw() {
 }
 sf::Sprite& GGSpriteAsset::GetSprite() {
 	return assetSprite;
+}
+
+void GGSpriteAsset::ChangeBitmap(std::string path)
+{
+
 }
 
 sf::FloatRect GGSpriteAsset::GetGlobalBounds()
@@ -131,6 +137,11 @@ void GGSheetAsset::SetCurFrame(int frame) {
 }
 int GGSheetAsset::GetCurFrame() {
 	return curFrame;
+}
+
+void GGSheetAsset::ChangeBitmap(std::string fileName) {
+	assetTexture.loadFromFile(fileName);
+	SetTexture(assetTexture);
 }
 
 //void GGSheetAsset::SetScale(sf::Vector2f scale)
@@ -300,6 +311,11 @@ sf::Vector2u GGStaticAsset::GetTextureSize() {
 	return assetTexture.getSize();
 }
 
+void GGStaticAsset::ChangeBitmap(std::string fileName) {
+	assetTexture.loadFromFile(fileName);
+	SetTexture(assetTexture);
+}
+
 GGTextAsset::GGTextAsset(sf::Vector2f pos, unsigned int size, const std::string fontFileName, sf::Color clr) : GGAbstractAsset(pos) {
 	assetFont.loadFromFile(fontFileName);
 	assetText.setFont(assetFont);
@@ -376,3 +392,44 @@ void GGTimerAsset::StopTimer() {
 bool GGTimerAsset::GetTimerStarted() {
 	return timerStarted;
 }
+
+GGSFXAsset::GGSFXAsset(std::string fileName) : GGAbstractAsset(sf::Vector2f(0, 0)) {
+	soundBuffer.loadFromFile(fileName);
+	sound.setBuffer(soundBuffer);
+}
+GGSFXAsset::~GGSFXAsset() {
+	sound.stop();
+}
+void GGSFXAsset::Play() {
+	sound.play();
+}
+void GGSFXAsset::Stop() {
+	sound.stop();
+}
+bool GGSFXAsset::IsPlaying() {
+	return sound.getStatus() == sf::Music::Playing;
+}
+void GGSFXAsset::Draw() {}
+
+void GGSFXAsset::ChangeSource(std::string path)
+{
+	soundBuffer.loadFromFile(path);
+}
+
+GGMusicAsset::GGMusicAsset(std::string fileName) : GGAbstractAsset(sf::Vector2f(0, 0)) {
+	music.openFromFile(fileName);
+}
+GGMusicAsset::~GGMusicAsset() {
+	music.stop();
+}
+void GGMusicAsset::Play() {
+	music.setLoop(true);
+	music.play();
+}
+void GGMusicAsset::Stop() {
+	music.stop();
+}
+bool GGMusicAsset::IsPlaying() {
+	return music.getStatus() == sf::Music::Playing;
+}
+void GGMusicAsset::Draw() {}

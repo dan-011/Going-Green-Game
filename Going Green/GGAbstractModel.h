@@ -14,7 +14,14 @@ public:
 	void SetContinueGame(bool isContinuing);
 	bool GetSuccess();
 	void SetSuccess(bool success);
+	void RemoveAsset(int index);
+	int GetNumAssets();
+	void InsertAsset(GGAbstractAsset* asset, int index);
 	virtual void ResetData() = 0;
+	virtual void StageOne() = 0;
+	virtual void StageTwo() = 0;
+	virtual void StageThree() = 0;
+
 
 private:
 	std::vector<GGAbstractAsset*> assets;
@@ -35,6 +42,9 @@ public:
 	bool PumpMaxReached();
 	void IncrementPumps();
 	GGTimerAsset* GetTimer();
+	virtual void StageOne() override;
+	virtual void StageTwo() override;
+	virtual void StageThree() override;
 private:
 	GGSheetAsset* pump; // change to object
 	GGSheetAsset* oil;
@@ -62,6 +72,10 @@ public:
 	GGTimerAsset* GetTimer();
 	void ChangeMouth();
 	void ResetMouth();
+	virtual void StageOne() override;
+	virtual void StageTwo() override;
+	virtual void StageThree() override;
+	void PlayVoiceSFX();
 private:
 	GGButton* button1;
 	GGButton* button2;
@@ -75,12 +89,14 @@ private:
 	int goalReports;
 	int numReports;
 	GGTimerAsset* timer;
+	std::vector<GGSFXAsset*> voicelines;
+	int currentSound;
 };
 
 class GGStageTransitionModel : public GGAbstractModel
 {
 public:
-	GGStageTransitionModel(std::string tableSource, std::string envelopeSource, std::string letterSource);
+	GGStageTransitionModel();
 	virtual ~GGStageTransitionModel();
 	GGStaticAsset* GetEnvelope();
 	GGStaticAsset* GetLetter();
@@ -93,11 +109,15 @@ public:
 	void SetEnvelopeVelocity(float velocity);
 	float GetEnvelopeDeceleration();
 	void ResetData() override;
-
+	void PlayLetterSound();
+	virtual void StageOne() override;
+	virtual void StageTwo() override;
+	virtual void StageThree() override;
 private:
 	GGStaticAsset* table;
 	GGStaticAsset* envelope;
 	GGStaticAsset* letter;
+	GGSFXAsset* crinkle;
 	float letterVelocity;
 	const float letterDeceleration;
 	float envelopeVelocity;
@@ -110,6 +130,9 @@ public:
 	~GGTestGameOverModel();
 	GGListAsset* GetGameOverAsset();
 	virtual void ResetData() override;
+	virtual void StageOne() override;
+	virtual void StageTwo() override;
+	virtual void StageThree() override;
 
 private:
 	GGListAsset* gameOverScreen; // change to object

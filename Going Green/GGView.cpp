@@ -14,8 +14,10 @@ bool GGView::Show() {
 
 		window.clear(sf::Color(255, 255, 255));
 
+		int i = 0;
 		for (auto asset : model->GetAssets()) {
 			asset->Draw();
+			i++;
 		}
 		window.display();
 	}
