@@ -11,6 +11,9 @@ public:
 	virtual ~GGView();
 	virtual bool Show(); /* unique controls and models for each game/stage - control creates the model */
 	sf::Time GetElapsedTime();
+	void SetStage(int stg);
+	void SetCtrl(GGAbstractCtrl* controller);
+	virtual int GetLastGame();
 
 private:
 	GGAbstractCtrl* ctrl;
@@ -26,10 +29,12 @@ public:
 	virtual bool Show() override;
 	void AddView(GGView* view);
 	void SetBackgroundMusic(std::string fileName);
+	int GetLastGame() override;
 
 private:
 	std::vector<GGView*> views;
 	GGMusicAsset* backgroundMusic;
 	int stage;
+	int game;
 };
 #endif

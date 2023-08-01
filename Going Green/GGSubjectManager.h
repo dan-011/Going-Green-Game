@@ -13,6 +13,9 @@ public:
 private:
 	std::vector<GGStage> stages;
 	GGSFXAsset loseJingle;
+	GGSFXAsset winJingle;
+	GGSecretEndingCtrl secretEndingCtrl;
+	GGView secretEndingView;
 };
 
 #endif

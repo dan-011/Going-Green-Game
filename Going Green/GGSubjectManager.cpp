@@ -1,10 +1,7 @@
 #include "GGSubjectManager.h"
 #include "TESTStage1.h"
 
-GGSubjectManager::GGSubjectManager(): loseJingle("Assets/Music/Losejingle.wav") {
-	// add the views once implemented
-
-}
+GGSubjectManager::GGSubjectManager(): loseJingle("Assets/Music/Losejingle.wav"), winJingle("Assets/Music/WinJingle.wav"), secretEndingView(&secretEndingCtrl) {}
 GGSubjectManager::~GGSubjectManager() {}
 void GGSubjectManager::PlayGame() {
 	bool success;
@@ -18,10 +15,21 @@ void GGSubjectManager::PlayGame() {
 		if (!success) {
 			loseJingle.Play();
 			while (loseJingle.IsPlaying()) {}
-			restart = stage.GameOver();
+			int lastGame = stage.GetLastGame();
+			if (lastGame == 2 && i == 1) {
+				secretEndingView.Show();
+				break;
+			}
+			else {
+				restart = stage.GameOver();
+			}
 		}
 		if (!restart) {
 			i++;
+		}
+		if (i > 1 && success) {
+			winJingle.Play();
+			while (winJingle.IsPlaying()) {}
 		}
 	}
 }

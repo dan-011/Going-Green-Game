@@ -10,6 +10,7 @@ public:
 	virtual ~GGStage();
 	virtual bool Play();
 	virtual bool GameOver();
+	int GetLastGame();
 
 private:
 	GGView* gameView;

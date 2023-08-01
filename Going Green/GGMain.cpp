@@ -3,16 +3,49 @@
 #include "GGAbstractAsset.h"
 #include "GGIndivObservers.h"
 
+void SetRandomGameOrder(GGCompositeView& compView, std::vector<GGView*> views) {
+    srand((unsigned int) time(NULL));
+    while (views.size() > 0) {
+        int index = rand() % views.size();
+        compView.AddView(views[index]);
+        views.erase(views.begin() + index);
+    }
+}
+
 int main()
 {
     GGSubjectManager subjMgr;
 
-    GGTitleScreenCtrl titleScreenCtrl;
+    GGTitleScreenModel titleScreenModel;
+    GGBookendsCtrl titleScreenCtrl(&titleScreenModel);
     GGView titleScreenView(&titleScreenCtrl);
     GGStage titleStage(&titleScreenView);
-    GGExitTitleScreenObserver titleScreenObs(titleScreenView, titleScreenCtrl);
-    GGStartTextTickObserver startTextTickObs(titleScreenView, titleScreenCtrl);
+    GGContinueGameObserver titleScreenObs(titleScreenView, titleScreenCtrl, sf::Keyboard::Enter);
+    GGBookendsTextTickObserver startTextTickObs(titleScreenView, titleScreenCtrl);
     subjMgr.AddStage(titleStage);
+
+    // Letter Cutscene
+    GGStageTransitionCtrl stageTransitionCtrl;
+    GGView stageTransitionView(&stageTransitionCtrl);
+
+    GGStageTransitionClickObserver stageTransitionClickObs(stageTransitionView, stageTransitionCtrl);
+    GGStageTransitionTickObserver stageTransitionTickObs(stageTransitionView, stageTransitionCtrl, sf::milliseconds(10));
+
+    // Pump Game
+    GGPumpCtrl pumpCtrl;
+    GGView pumpView(&pumpCtrl);
+
+    GGPumpClickObserver pumpClickObs(pumpView, pumpCtrl);
+    GGPumpTickObserver pumptickObs(pumpView, pumpCtrl, sf::milliseconds(55));
+    GGPumpTimerObserver pumpTimerObs(pumpView, pumpCtrl);
+
+    // News Game
+    GGNewsCtrl newsCtrl;
+    GGView newsView(&newsCtrl);
+
+    GGNewsTickObserver buttonTickObs(newsView, newsCtrl, sf::milliseconds(55));
+    GGNewsButtonClickObserver buttonClickObs(newsView, newsCtrl);
+    GGNewsTimerObserver newsTimerObs(newsView, newsCtrl);
 
     // Cannon Game
     GGCannonGameCtrl cannonCtrl;
@@ -52,36 +85,62 @@ int main()
     GGTargetTickObserver targetTickObs8(cannonView, cannonCtrl, 8, 3);
     GGTargetTickObserver targetTickObs9(cannonView, cannonCtrl, 9, 3);
 
+    // Views Vector
+    std::vector<GGView*> views;
+    views.push_back(&newsView);
+    views.push_back(&cannonView);
+
     // Stage One Region
-    GGGameOverCtrl gameOverCtrlStageOne;
-    gameOverCtrlStageOne.GetModel()->StageOne();
+    GGGameOverModel gameOverModelStageOne;
+    gameOverModelStageOne.StageOne();
+    GGBookendsCtrl gameOverCtrlStageOne(&gameOverModelStageOne);
     GGView gameOverStageOneView(&gameOverCtrlStageOne);
-    GGRestartGameObserver restartGameObsOne(gameOverStageOneView, gameOverCtrlStageOne);
+    GGContinueGameObserver restartGameObsOne(gameOverStageOneView, gameOverCtrlStageOne, sf::Keyboard::R);
+    GGBookendsTextTickObserver gameOverTextStageOneObs(gameOverStageOneView, gameOverCtrlStageOne);
 
     GGCompositeView stageOneView(1);
     stageOneView.SetBackgroundMusic("Assets/Music/MainThemeLoop1.wav");
-    stageOneView.AddView(&cannonView);
-    stageOneView.AddView(&cannonView);
-    stageOneView.AddView(&cannonView);
+    stageOneView.AddView(&stageTransitionView);
+    stageOneView.AddView(&pumpView);
+    SetRandomGameOrder(stageOneView, views);
+    views.push_back(&pumpView);
 
-    // Stage One
     GGStage stageOne(&stageOneView, &gameOverStageOneView);
     subjMgr.AddStage(stageOne);
 
+    // Stage Two Region
+    GGCompositeView stageTwoView(2);
+    stageTwoView.SetBackgroundMusic("Assets/Music/MainThemeLoop2.wav");
+    stageTwoView.AddView(&stageTransitionView);
+    SetRandomGameOrder(stageTwoView, views);
 
-    GGGameOverCtrl gameOverCtrlStageTwo;
-    gameOverCtrlStageTwo.GetModel()->StageTwo();
+    GGGameOverModel gameOverModelStageTwo;
+    // gameOverModelStageTwo.StageTwo();
+    GGBookendsCtrl gameOverCtrlStageTwo(&gameOverModelStageTwo);
     GGView gameOverStageTwoView(&gameOverCtrlStageTwo);
-    GGRestartGameObserver restartGameObsTwo(gameOverStageTwoView, gameOverCtrlStageTwo);
+    GGContinueGameObserver restartGameObsTwo(gameOverStageTwoView, gameOverCtrlStageTwo, sf::Keyboard::R);
+    GGBookendsTextTickObserver gameOverTextStageTwoObs(gameOverStageTwoView, gameOverCtrlStageTwo);
 
-    GGGameOverCtrl gameOverCtrlStageThree;
-    gameOverCtrlStageThree.GetModel()->StageThree();
+    GGStage stageTwo(&stageTwoView, &gameOverStageTwoView);
+    subjMgr.AddStage(stageTwo);
+
+    // Stage Three Region
+    GGCompositeView stageThreeView(3);
+    stageThreeView.SetBackgroundMusic("Assets/Music/MainThemeLoop3.wav");
+    stageThreeView.AddView(&stageTransitionView);
+    SetRandomGameOrder(stageThreeView, views);
+
+    GGGameOverModel gameOverModelStageThree;
+    gameOverModelStageThree.StageThree();
+    GGBookendsCtrl gameOverCtrlStageThree(&gameOverModelStageThree);
     GGView gameOverStageThreeView(&gameOverCtrlStageThree);
-    GGRestartGameObserver restartGameObsThree(gameOverStageThreeView, gameOverCtrlStageThree);
+    GGContinueGameObserver restartGameObsThree(gameOverStageThreeView, gameOverCtrlStageThree, sf::Keyboard::R);
+    GGBookendsTextTickObserver gameOverTextStageThreeObs(gameOverStageThreeView, gameOverCtrlStageThree);
 
+    GGStage stageThree(&stageThreeView, &gameOverStageThreeView);
+    subjMgr.AddStage(stageThree);
 
-    /* Test Pump Game */
-
+    // Stage Four Region
     GGStageFourCtrl stageFourCtrl;
     GGView stageFourView(&stageFourCtrl);
     GGStage stageFour(&stageFourView);

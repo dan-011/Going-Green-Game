@@ -17,29 +17,116 @@ private:
 	GGAbstractCtrl& ctrl;
 };
 
-class GGTestGameOverTick : public GGAbstractObserver {
+class GGPumpClickObserver : public GGAbstractObserver {
 public:
-	GGTestGameOverTick(GGView& vw, GGGameOverCtrl& controller);
-	~GGTestGameOverTick();
+	GGPumpClickObserver(GGView& vw, GGPumpCtrl& controller);
+	~GGPumpClickObserver();
 	virtual void Update() override;
 
 private:
 	GGView& view;
-	GGGameOverCtrl& ctrl;
-	sf::Time deltaT;
-	sf::Time currentTime;
-
+	GGPumpCtrl& ctrl;
 };
 
-class GGRestartGameObserver : public GGAbstractObserver {
+class GGPumpTickObserver : public GGAbstractObserver {
 public:
-	GGRestartGameObserver(GGView& vw, GGGameOverCtrl& controller);
-	~GGRestartGameObserver();
+	GGPumpTickObserver(GGView& vw, GGPumpCtrl& controller, sf::Time dt);
+	~GGPumpTickObserver();
 	virtual void Update() override;
 
 private:
 	GGView& view;
-	GGGameOverCtrl& ctrl;
+	GGPumpCtrl& ctrl;
+	sf::Time deltaT;
+	sf::Time currentTimePump;
+	sf::Time currentTime;
+};
+
+class GGNewsTickObserver : public GGAbstractObserver {
+public:
+	GGNewsTickObserver(GGView& vw, GGNewsCtrl& controller, sf::Time dt);
+	~GGNewsTickObserver();
+	virtual void Update() override;
+	
+
+private:
+	GGView& view;
+	GGNewsCtrl& ctrl;
+	sf::Time deltaT;
+	sf::Time currentTime;
+	sf::Time currentTimeMouth;
+	sf::Time mouthDeltaTime;
+	sf::Time currentTimeMouthTotal;
+	sf::Time mouthTotalDeltaTime;
+};
+
+class GGNewsButtonClickObserver : public GGAbstractObserver
+{
+public:
+	GGNewsButtonClickObserver(GGView& vw, GGNewsCtrl& controller);
+	~GGNewsButtonClickObserver();
+	virtual void Update() override;
+private:
+	GGView& view;
+	GGNewsCtrl& ctrl;
+};
+
+class GGNewsTimerObserver : public GGAbstractObserver
+{
+public:
+	GGNewsTimerObserver(GGView& vw, GGNewsCtrl& controller);
+	~GGNewsTimerObserver();
+	virtual void Update() override;
+private:
+	GGView& view;
+	GGNewsCtrl& ctrl;
+	sf::Time currentTime;
+};
+
+class GGPumpTimerObserver : public GGAbstractObserver
+{
+public:
+	GGPumpTimerObserver(GGView& vw, GGPumpCtrl& controller);
+	~GGPumpTimerObserver();
+	virtual void Update() override;
+private:
+	GGView& view;
+	GGPumpCtrl& ctrl;
+	sf::Time currentTime;
+};
+class GGStageTransitionTickObserver : public GGAbstractObserver
+{
+public:
+	GGStageTransitionTickObserver(GGView& vw, GGStageTransitionCtrl& controller, sf::Time dt);
+	~GGStageTransitionTickObserver();
+	virtual void Update() override;
+private:
+	GGView& view;
+	GGStageTransitionCtrl& ctrl;
+	sf::Time currentTime;
+	sf::Time deltaT;
+};
+
+class GGStageTransitionClickObserver : public GGAbstractObserver
+{
+public:
+	GGStageTransitionClickObserver(GGView& vw, GGStageTransitionCtrl& controller);
+	~GGStageTransitionClickObserver();
+	virtual void Update() override;
+private:
+	GGView& view;
+	GGStageTransitionCtrl& ctrl;
+};
+
+class GGEndGameObserver : public GGAbstractObserver {
+public:
+	GGEndGameObserver(GGView& vw, GGPumpCtrl& controller);
+	~GGEndGameObserver();
+	virtual void Update() override;
+
+private:
+	GGView& view;
+	GGPumpCtrl& ctrl;
 };
 
 class GGClockMSObserver : public GGAbstractObserver {
@@ -64,7 +151,6 @@ public:
 private:
 	GGView& view;
 	GGCannonGameCtrl& ctrl;
-	bool clickSwitch;
 };
 
 class GGCannonTickObserver : public GGAbstractObserver {
@@ -133,26 +219,27 @@ private:
 	sf::Time currentTime;
 };
 
-class GGExitTitleScreenObserver : public GGAbstractObserver {
+class GGContinueGameObserver : public GGAbstractObserver {
 public:
-	GGExitTitleScreenObserver(GGView& vw, GGTitleScreenCtrl& controller);
-	~GGExitTitleScreenObserver();
+	GGContinueGameObserver(GGView& vw, GGBookendsCtrl& controller, sf::Keyboard::Key continueKey);
+	~GGContinueGameObserver();
 	virtual void Update() override;
 
 private:
 	GGView& view;
-	GGTitleScreenCtrl& ctrl;
+	GGBookendsCtrl& ctrl;
+	sf::Keyboard::Key key;
 };
 
-class GGStartTextTickObserver : public GGAbstractObserver {
+class GGBookendsTextTickObserver : public GGAbstractObserver {
 public:
-	GGStartTextTickObserver(GGView& vw, GGTitleScreenCtrl& controller);
-	~GGStartTextTickObserver();
+	GGBookendsTextTickObserver(GGView& vw, GGBookendsCtrl& controller);
+	~GGBookendsTextTickObserver();
 	virtual void Update() override;
 
 private:
 	GGView& view;
-	GGTitleScreenCtrl& ctrl;
+	GGBookendsCtrl& ctrl;
 	sf::Time deltaT;
 	sf::Time currentTime;
 };

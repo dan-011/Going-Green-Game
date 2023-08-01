@@ -7,3 +7,6 @@ bool GGStage::Play() {
 bool GGStage::GameOver() {
 	return gameOverView->Show();
 }
+int GGStage::GetLastGame() {
+	return gameView->GetLastGame();
+}

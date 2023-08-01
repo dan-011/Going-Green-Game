@@ -20,12 +20,14 @@ public:
 	virtual void ResetData();
 	virtual GGTimerAsset* GetTimer();
 	virtual GGMusicAsset* GetBackgroundMusic();
-	virtual void AssignBackgroundMusic(std::string fileName);
+	virtual void AssignBackgroundMusic(std::string fileName, bool repeat = true);
 	int GetStage();
 	void SetStage(int stg);
 	virtual void StageOne() = 0;
 	virtual void StageTwo() = 0;
 	virtual void StageThree() = 0;
+	bool GetClickSwitch();
+	void SetClickSwitch(bool clckSwtch);
 
 private:
 	std::vector<GGAbstractAsset*> assets;
@@ -34,19 +36,104 @@ private:
 	GGTimerAsset timer;
 	GGMusicAsset* backgroundMusic;
 	int stage;
+	bool clickSwitch;
 };
 
-class GGGameOverModel : public GGAbstractModel {
+class GGPumpModel : public GGAbstractModel {
 public:
-	GGGameOverModel();
-	~GGGameOverModel();
-	GGStaticAsset* GetGameOverAsset();
+	GGPumpModel();
+	virtual ~GGPumpModel();
+	GGSheetAsset* GetPump();
+	GGSheetAsset* GetOil();
+	GGMinigameTransition* GetTransition();
+	int GetNumPumps();
+	void SetNumPumps(int nPumps);
+	virtual void ResetData() override;
+	bool PumpMaxReached();
+	void IncrementPumps();
+	GGTimerAsset* GetTimer();
 	virtual void StageOne() override;
 	virtual void StageTwo() override;
 	virtual void StageThree() override;
-
 private:
-	GGStaticAsset* gameOverScreen; // change to object
+	GGSheetAsset* pump; // change to object
+	GGSheetAsset* oil;
+	GGMinigameTransition* transition;
+	GGStaticAsset* background;
+	int maxPumps;
+	int numPumps;
+	int goalPumps;
+	int totalPumps;
+	bool maxedOut;
+	GGTimerAsset* timer;
+};
+
+class GGNewsModel : public GGAbstractModel {
+public:
+	GGNewsModel(int maxReports);
+	virtual ~GGNewsModel();
+	GGButton* GetButton(int index);
+	GGTextAsset* GetQuestionText();
+	int GetNumAnswers();
+	void SetNumAnswers(int nAnswers);
+	bool GoalMet();
+	void ResetData();
+	GGMinigameTransition* GetTransition();
+	GGTimerAsset* GetTimer();
+	void ChangeMouth();
+	void ResetMouth();
+	virtual void StageOne() override;
+	virtual void StageTwo() override;
+	virtual void StageThree() override;
+	void PlayVoiceSFX();
+	void StopAllVoices();
+private:
+	GGButton* button1;
+	GGButton* button2;
+	GGMinigameTransition* transition;
+	GGStaticAsset* background;
+	GGStaticAsset* frame;
+	GGStaticAsset* questionBubble;
+	GGStaticAsset* reporter;
+	GGTextAsset* questionText;
+	GGSheetAsset* mouth;
+	int goalReports;
+	int numReports;
+	GGTimerAsset* timer;
+	std::vector<GGSFXAsset*> voicelines;
+	int currentSound;
+};
+
+class GGStageTransitionModel : public GGAbstractModel
+{
+public:
+	GGStageTransitionModel();
+	virtual ~GGStageTransitionModel();
+	GGStaticAsset* GetEnvelope();
+	GGStaticAsset* GetLetter();
+	bool GetLetterMoved();
+	void SetLetterMoved(bool moved);
+	float GetLetterVelocity();
+	void SetLetterVelocity(float velocity);
+	float GetLetterDeceleration();
+	float GetEnvelopeVelocity();
+	void SetEnvelopeVelocity(float velocity);
+	float GetEnvelopeDeceleration();
+	void ResetData() override;
+	void PlayLetterSound();
+	virtual void StageOne() override;
+	virtual void StageTwo() override;
+	virtual void StageThree() override;
+private:
+	GGStaticAsset* table;
+	GGStaticAsset* envelope;
+	GGStaticAsset* letter;
+	GGSFXAsset* crinkle;
+	float letterVelocity;
+	const float letterDeceleration;
+	float envelopeVelocity;
+	const float envelopeDeceleration;
+	bool letterMoved;
 };
 
 enum GGPROJECTILE_STATUS {
@@ -89,6 +176,9 @@ public:
 	virtual void StageThree() override;
 	int GetHitCount();
 	void IncrementHitCount();
+	GGMinigameTransition* GetTransition();
+	bool GetGameStarted();
+	void SetGameStarted(bool startGame);
 
 private:
 	GGSheetAsset cannonAsset;
@@ -111,6 +201,8 @@ private:
 	int totalTargets;
 	sf::Time targetSpeed;
 	int hitCount;
+	GGMinigameTransition transitionAsset;
+	bool gameStarted;
 };
 
 class GGStageFourModel : public GGAbstractModel {
@@ -130,18 +222,54 @@ private:
 	GGStaticAsset background;
 };
 
-class GGTitleScreenModel : public GGAbstractModel {
+class GGBookendsModel : public GGAbstractModel {
+public:
+	virtual ~GGBookendsModel();
+	virtual void SetTextVisibility(bool isVisible) = 0;
+	virtual bool GetTextVisibility() = 0;
+};
+
+class GGTitleScreenModel : public GGBookendsModel {
 public:
 	GGTitleScreenModel();
 	~GGTitleScreenModel();
 	virtual void StageOne() override;
 	virtual void StageTwo() override;
 	virtual void StageThree() override;
-	void SetTextVisibility(bool isVisible);
-	bool GetTextVisibility();
+	virtual void SetTextVisibility(bool isVisible) override;
+	virtual bool GetTextVisibility() override;
 
 private:
 	GGStaticAsset background;
 	GGTextAsset pressStartText;
+};
+
+class GGGameOverModel : public GGBookendsModel {
+public:
+	GGGameOverModel();
+	~GGGameOverModel();
+	GGStaticAsset* GetGameOverAsset();
+	virtual void StageOne() override;
+	virtual void StageTwo() override;
+	virtual void StageThree() override;
+	virtual void SetTextVisibility(bool isVisible) override;
+	virtual bool GetTextVisibility() override;
+
+private:
+	GGStaticAsset* gameOverScreen; // change to object
+	GGTextAsset gameOverText;
+	GGTextAsset restartGameText;
+};
+
+class GGSecretEndingModel : public GGAbstractModel {
+public:
+	GGSecretEndingModel();
+	~GGSecretEndingModel();
+	virtual void StageOne() override;
+	virtual void StageTwo() override;
+	virtual void StageThree() override;
+
+private:
+	GGStaticAsset backgroundAsset;
 };
 #endif

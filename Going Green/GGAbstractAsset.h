@@ -10,7 +10,7 @@
 class GGAbstractAsset {
 public:
 	GGAbstractAsset(sf::Vector2f pos);
-	virtual ~GGAbstractAsset();
+	~GGAbstractAsset();
 	virtual void SetPos(sf::Vector2f pos);
 	sf::Vector2f GetPos();
 	virtual void Draw() = 0; // TODO: refactor
@@ -39,7 +39,8 @@ public:
 	virtual void Draw() override;
 	virtual sf::FloatRect GetBoundingBox();
 	virtual sf::Vector2u GetTextureSize() = 0;
-	virtual void ChangeBitmap(std::string fileName) = 0;
+	virtual sf::FloatRect GetGlobalBounds();
+	virtual void ChangeBitmap(std::string fileName);
 
 protected:
 	sf::Sprite& GetSprite();
@@ -50,24 +51,27 @@ private:
 
 class GGSheetAsset : public GGSpriteAsset {
 public:
-	GGSheetAsset(sf::Vector2f pos, const std::string fileName, sf::Vector2u dims, bool animateOnce = false, int totalFrames = 0);
+	GGSheetAsset(sf::Vector2f pos, const std::string fileName, sf::Vector2u dims, bool animateOnce = false, bool start = true, int totalFrames = 0);
 	virtual ~GGSheetAsset();
 	virtual void Draw() override;
 	virtual void NextAnimation() override;
 	virtual bool AnimationCompleted();
 	virtual void SetCurFrame(int frame);
 	virtual int GetCurFrame();
+	virtual void SetStart(bool start);
+	virtual bool CheckFinishedAnimating();
+	virtual void SetFinishedAnimating(bool finished);
 	virtual sf::Vector2u GetTextureSize() override;
 	virtual void ChangeBitmap(std::string fileName) override;
 
 private:
 	sf::Texture assetTexture;
 	sf::IntRect assetBlock;
-	// sf::RectangleShape assetBody;
 	sf::Vector2u dimensions;
 	int curFrame;
 	bool animOnce;
 	bool finishedAnimating;
+	bool started;
 	int numFrames;
 };
 
@@ -83,7 +87,6 @@ public:
 	virtual void ChangeBitmap(std::string fileName) override {} // TODO
 private:
 	std::vector<sf::Texture*> assetTextures;
-	// sf::RectangleShape assetBody;
 	sf::Sprite assetSprite;
 	int curFrame;
 };
@@ -97,7 +100,41 @@ public:
 
 private:
 	sf::Texture assetTexture;
-	// sf::RectangleShape assetBody;
+};
+
+class GGMinigameTransition : public GGSpriteAsset {
+public:
+	GGMinigameTransition(std::string headerText, std::string subtitleText);
+	virtual ~GGMinigameTransition();
+	virtual void Draw() override;
+	virtual void Scale(sf::Vector2f dims) override;
+	virtual void SetDrawing(bool drawing);
+	virtual bool GetDrawing();
+	virtual sf::Vector2u GetTextureSize() override;
+private:
+	sf::Font font;
+	sf::Text header;
+	sf::Text subtitle;
+	sf::RectangleShape background;
+	bool isDrawing;
+};
+
+class GGButton : public GGSpriteAsset {
+public:
+	GGButton(sf::Vector2f pos, std::string text);
+	virtual void Draw() override;
+	virtual void SetClicked(bool click);
+	virtual void SetText(std::string text);
+	virtual void Scale(sf::Vector2f dims) override;
+	virtual bool GetClicked();
+	virtual sf::Vector2u GetTextureSize() override;
+	virtual sf::FloatRect GetGlobalBounds() override;
+	virtual void SetCurFrame(int frame);
+private:
+	sf::Text buttonText;
+	sf::Font font;
+	bool isClicked;
+	GGSheetAsset buttonBody;
 };
 
 class GGTextAsset : public GGAbstractAsset {
@@ -144,6 +181,7 @@ public:
 	void Stop();
 	bool IsPlaying();
 	virtual void Draw() override;
+	virtual void ChangeSource(std::string path);
 
 private:
 	sf::SoundBuffer soundBuffer;
@@ -158,8 +196,11 @@ public:
 	void Stop();
 	bool IsPlaying();
 	virtual void Draw() override;
+	void SetRepeat(bool repeatMusic);
 
 private:
 	sf::Music music;
+	bool repeat;
+
 };
 #endif

@@ -3,6 +3,7 @@
 #ifdef DEBUG
 #include <cassert>
 #include <iostream>
+#include <cmath>
 using namespace std;
 #endif
 
@@ -58,27 +59,26 @@ sf::FloatRect GGSpriteAsset::GetBoundingBox() {
 	return assetSprite.getGlobalBounds();
 }
 void GGSpriteAsset::Draw() {
-	GGWindow::Instance().GetWindow().draw(assetSprite);
+	if (GetVisibility()) {
+		GGWindow::Instance().GetWindow().draw(assetSprite);
+	}
 }
 sf::Sprite& GGSpriteAsset::GetSprite() {
 	return assetSprite;
 }
+sf::FloatRect GGSpriteAsset::GetGlobalBounds()
+{
+	return assetSprite.getGlobalBounds();
+}
+void GGSpriteAsset::ChangeBitmap(std::string fileName) {}
 
 
-GGSheetAsset::GGSheetAsset(sf::Vector2f pos, const std::string fileName, sf::Vector2u dims, bool animateOnce, int totalFrames) : GGSpriteAsset(pos), dimensions(dims), curFrame(0), animOnce(animateOnce), finishedAnimating(false), numFrames(totalFrames) {
+GGSheetAsset::GGSheetAsset(sf::Vector2f pos, const std::string fileName, sf::Vector2u dims, bool animateOnce, bool start, int totalFrames) : GGSpriteAsset(pos), dimensions(dims), curFrame(0), animOnce(animateOnce), finishedAnimating(false), started(start), numFrames(totalFrames) {
 	assetTexture.loadFromFile(fileName);
 	assetBlock.width = assetTexture.getSize().x / dims.x;
 	assetBlock.height = assetTexture.getSize().y / dims.y;
 	assetBlock.top = 0;
 	assetBlock.left = 0;
-	
-	// assetBody.setSize(sf::Vector2f(assetTexture.getSize().x, assetTexture.getSize().y));
-	/*
-	assetBody.setSize(sf::Vector2f((float)assetBlock.width, (float)assetBlock.height));
-	assetBody.setOrigin(assetBody.getSize() / 2.0f);
-	assetBody.setPosition(pos);
-	assetBody.setTexture(&assetTexture);
-	assetBody.setTextureRect(assetBlock);*/
 
 	SetTexture(assetTexture);
 	SetAssetBlock(assetBlock);
@@ -90,11 +90,11 @@ GGSheetAsset::GGSheetAsset(sf::Vector2f pos, const std::string fileName, sf::Vec
 }
 GGSheetAsset::~GGSheetAsset() {}
 void GGSheetAsset::Draw() {
-	if (finishedAnimating && animOnce) return;
+	if (finishedAnimating && animOnce || !started) return;
 	GGWindow::Instance().GetWindow().draw(GetSprite());
 }
 void GGSheetAsset::NextAnimation() {
-	if (finishedAnimating && animOnce) return;
+	if (finishedAnimating && animOnce || !started) return;
 	curFrame++;
 	if (curFrame == numFrames) {
 		curFrame = 0;
@@ -105,11 +105,25 @@ void GGSheetAsset::NextAnimation() {
 	assetBlock.top = row * assetBlock.height;
 	assetBlock.left = col * assetBlock.width;
 
-	// assetBody.setTextureRect(assetBlock);
 	SetAssetBlock(assetBlock);
+}
+
+void GGSheetAsset::SetStart(bool start)
+{
+	started = start;
 }
 bool GGSheetAsset::AnimationCompleted() {
 	return curFrame == 0;
+}
+
+bool GGSheetAsset::CheckFinishedAnimating()
+{
+	return finishedAnimating;
+}
+
+void GGSheetAsset::SetFinishedAnimating(bool finished)
+{
+	finishedAnimating = finished;
 }
 void GGSheetAsset::SetCurFrame(int frame) {
 	curFrame = frame;
@@ -122,14 +136,14 @@ void GGSheetAsset::SetCurFrame(int frame) {
 int GGSheetAsset::GetCurFrame() {
 	return curFrame;
 }
-sf::Vector2u GGSheetAsset::GetTextureSize() {
+sf::Vector2u GGSheetAsset::GetTextureSize()
+{
 	return sf::Vector2u(assetTexture.getSize().x / dimensions.x, assetTexture.getSize().y / dimensions.y);
 }
 void GGSheetAsset::ChangeBitmap(std::string fileName) {
 	assetTexture.loadFromFile(fileName);
 	SetTexture(assetTexture);
 }
-
 
 GGListAsset::GGListAsset(sf::Vector2f pos, std::vector<std::string> fileNames) : GGSpriteAsset(pos), curFrame(0) {
 	for (auto fileName : fileNames) {
@@ -138,9 +152,6 @@ GGListAsset::GGListAsset(sf::Vector2f pos, std::vector<std::string> fileNames) :
 		assetTextures.push_back(assetTexture);
 	}
 	if (assetTextures.size() == 0) throw "No textures loaded";
-	// assetBody.setSize(sf::Vector2f((float)assetTextures[curFrame]->getSize().x, (float)assetTextures[curFrame]->getSize().y));
-	// assetBody.setOrigin(assetBody.getSize() / 2.0f);
-	// assetBody.setPosition(pos);
 	SetOrigin((float)assetTextures[curFrame]->getSize().x, (float)assetTextures[curFrame]->getSize().y);
 }
 GGListAsset::~GGListAsset() {
@@ -159,7 +170,7 @@ bool GGListAsset::AnimationCompleted() {
 	return curFrame == 0;
 }
 void GGListAsset::SetCurFrame(int frame) {
-	curFrame = frame - 1;
+	curFrame = frame;
 }
 int GGListAsset::GetCurFrame() {
 	return curFrame;
@@ -181,6 +192,118 @@ void GGStaticAsset::ChangeBitmap(std::string fileName) {
 	assetTexture.loadFromFile(fileName);
 	SetTexture(assetTexture);
 }
+
+GGMinigameTransition::GGMinigameTransition(std::string headerText, std::string subtitleText) : GGSpriteAsset(sf::Vector2f(0, 0)), isDrawing(true)
+{
+	if (!font.loadFromFile("Assets/Fonts/Minimal5x7.ttf"))
+	{
+		std::cout << "Font load from file failure!" << endl;
+	}
+	header.setFont(font);
+	subtitle.setFont(font);
+
+	header.setString(headerText);
+	header.setOrigin(round(header.getGlobalBounds().width / 2), round(header.getGlobalBounds().height / 2));
+	header.setPosition(640, 275);
+	header.setScale(2.5, 2.5);
+	header.setFillColor(sf::Color(0xE6EBD6FF));
+
+	subtitle.setString(subtitleText);
+	subtitle.setOrigin(round(subtitle.getGlobalBounds().width / 2), round(subtitle.getGlobalBounds().height / 2));
+	subtitle.setPosition(640, 375);
+	subtitle.setScale(2, 2);
+	subtitle.setFillColor(sf::Color(0xE6EBD6FF));
+
+	background.setFillColor(sf::Color(0x24222EDD));
+	background.setPosition(sf::Vector2f(0, 0));
+	background.setSize(sf::Vector2f(2000, 1000));
+}
+GGMinigameTransition::~GGMinigameTransition() {}
+
+void GGMinigameTransition::Draw()
+{
+	if (isDrawing)
+	{
+		GGWindow::Instance().GetWindow().draw(background);
+		GGWindow::Instance().GetWindow().draw(header);
+		GGWindow::Instance().GetWindow().draw(subtitle);
+	}
+}
+
+void GGMinigameTransition::Scale(sf::Vector2f scale)
+{
+	header.setScale(scale);
+	subtitle.setScale(scale);
+}
+
+void GGMinigameTransition::SetDrawing(bool drawing)
+{
+	isDrawing = drawing;
+}
+
+bool GGMinigameTransition::GetDrawing()
+{
+	return isDrawing;
+}
+
+sf::Vector2u GGMinigameTransition::GetTextureSize()
+{
+	return sf::Vector2u(background.getTextureRect().width, background.getTextureRect().height);
+}
+
+GGButton::GGButton(sf::Vector2f pos, std::string text) : GGSpriteAsset(pos), isClicked(false), buttonBody(pos, "Assets/Animations/tv_game/button.png", sf::Vector2u(2, 2))
+{
+	buttonText.setString(text);
+	buttonText.setOrigin(round(buttonText.getGlobalBounds().width / 2), round(buttonText.getGlobalBounds().height / 2));
+	buttonText.setScale(2.5, 2.5);
+	if (!font.loadFromFile("Assets/Fonts/Minimal5x7.ttf"))
+	{
+		std::cout << "Font load from file failure!" << endl;
+	}
+	buttonText.setFont(font);
+	buttonText.setPosition(buttonBody.GetPos());
+	buttonText.move(buttonText.getLocalBounds().width * -5.5f, -60);
+	buttonBody.Scale(sf::Vector2f(6, 6));
+	//buttonText.setScale(sf::Vector2f(4, 4));
+	buttonText.setFillColor(sf::Color(0x24222EFF));
+}
+void GGButton::Draw()
+{
+	buttonBody.Draw();
+	GGWindow::Instance().GetWindow().draw(buttonText);
+}
+void GGButton::Scale(sf::Vector2f scale)
+{
+	buttonBody.Scale(scale);
+	buttonText.setScale(sf::Vector2f(1, 1) + scale);
+}
+void GGButton::SetClicked(bool click)
+{
+	isClicked = click;
+}
+bool GGButton::GetClicked()
+{
+	return isClicked;
+}
+
+void GGButton::SetText(std::string text)
+{
+	buttonText.setString(text);
+}
+sf::Vector2u GGButton::GetTextureSize()
+{
+	return buttonBody.GetTextureSize();
+}
+sf::FloatRect GGButton::GetGlobalBounds()
+{
+	return buttonBody.GetGlobalBounds();
+}
+
+void GGButton::SetCurFrame(int frame)
+{
+	buttonBody.SetCurFrame(frame);
+}
+
 
 GGTextAsset::GGTextAsset(sf::Vector2f pos, unsigned int size, const std::string fontFileName, sf::Color clr) : GGAbstractAsset(pos) {
 	assetFont.loadFromFile(fontFileName);
@@ -205,6 +328,7 @@ void GGTextAsset::SetPos(sf::Vector2f pos) {
 void GGTextAsset::SetSize(int sz) {
 	assetText.setCharacterSize(sz);
 }
+
 
 GGTimerAsset::GGTimerAsset(sf::Vector2f pos, unsigned int size, const std::string fontFileName, int sec, int ms, sf::Color clr) : GGTextAsset(pos, size, fontFileName, clr), second(sec), millisecond(ms), startTime(sec, ms), timerStarted(false) {
 	sprintf_s(timerStr, "%d.0%d", second, millisecond);
@@ -248,8 +372,15 @@ void GGTimerAsset::SetTimer(sf::Vector2u time) {
 	RestartTimer();
 }
 void GGTimerAsset::RestartTimer() {
-	second = (int) startTime.x;
-	millisecond = (int) startTime.y;
+	second = (int)startTime.x;
+	millisecond = (int)startTime.y;
+	if (millisecond < 10) {
+		sprintf_s(timerStr, "%d.0%d", second, millisecond);
+	}
+	else {
+		sprintf_s(timerStr, "%d.%d", second, millisecond);
+	}
+	SetText(timerStr);
 }
 void GGTimerAsset::StartTimer() {
 	timerStarted = true;
@@ -260,6 +391,7 @@ void GGTimerAsset::StopTimer() {
 bool GGTimerAsset::GetTimerStarted() {
 	return timerStarted;
 }
+
 GGSFXAsset::GGSFXAsset(std::string fileName) : GGAbstractAsset(sf::Vector2f(0,0)) {
 	soundBuffer.loadFromFile(fileName);
 	sound.setBuffer(soundBuffer);
@@ -277,17 +409,20 @@ bool GGSFXAsset::IsPlaying() {
 	return sound.getStatus() == sf::Music::Playing;
 }
 void GGSFXAsset::Draw() {}
+void GGSFXAsset::ChangeSource(std::string path)
+{
+	soundBuffer.loadFromFile(path);
+}
 
-GGMusicAsset::GGMusicAsset(std::string fileName) : GGAbstractAsset(sf::Vector2f(0, 0)) {
+GGMusicAsset::GGMusicAsset(std::string fileName) : GGAbstractAsset(sf::Vector2f(0, 0)), repeat(true) {
 	music.openFromFile(fileName);
 }
 GGMusicAsset::~GGMusicAsset() {
 	music.stop();
 }
 void GGMusicAsset::Play() {
-	music.setLoop(true);
+	music.setLoop(repeat);
 	music.play();
-	assert(music.getStatus() == sf::Music::Playing);
 }
 void GGMusicAsset::Stop() {
 	music.stop();
@@ -296,3 +431,6 @@ bool GGMusicAsset::IsPlaying() {
 	return music.getStatus() == sf::Music::Playing;
 }
 void GGMusicAsset::Draw() {}
+void GGMusicAsset::SetRepeat(bool repeatMusic) {
+	repeat = repeatMusic;
+}
